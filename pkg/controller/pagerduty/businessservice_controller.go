@@ -18,19 +18,30 @@ package pagerdutycontrollers
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/mattgialelis/dutycontroller/pkg/providers/pd"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	pagerdutyv1beta1 "github.com/mattgialelis/dutycontroller/api/v1beta1"
 )
 
+const (
+	businesServiceFinalizer = "businessservice.dutycontroller.io/finalizer"
+)
+
 // BusinessServiceReconciler reconciles a BusinessService object
 type BusinessServiceReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme      *runtime.Scheme
+	PagerClient *pd.Pagerduty
+	recorder    record.EventRecorder
 }
 
 //+kubebuilder:rbac:groups=pagerduty.dutycontroller.io,resources=businessservices,verbs=get;list;watch;create;update;patch;delete
@@ -52,24 +63,91 @@ func (r *BusinessServiceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	var businesService pagerdutyv1beta1.BusinessService
 
+	// Fetch the BusinessService instance
 	if err := r.Get(ctx, req.NamespacedName, &businesService); err != nil {
-		log.Error(err, "unable to fetch BusinessService")
-		return ctrl.Result{}, client.IgnoreNotFound(err)
+		//do not requeue if the resource does not exist
+		if apierrors.IsNotFound(err) {
+			return ctrl.Result{}, nil
+		}
+		return ctrl.Result{}, fmt.Errorf("get resource: %w", err)
 	}
 
-	// Check if the BusinessService already exists in PagerDuty
-	// If it does not exist, create it
-	// If it does exist, update it
+	defer func() {
+		if businesService.DeletionTimestamp.IsZero() {
+			if err := r.Status().Update(ctx, &businesService); err != nil {
+				log.Error(err, "unable to update Business Service status")
+			}
+		}
+	}()
 
-	// Fetch the BusinessService instance
+	// Check if the BusinessService instance exists
+	_, exists, err := r.PagerClient.GetBusinessServicebyName(req.Name)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("could not get business service by name: %w", err)
+	}
 
-	// TODO(user): your logic here
+	// Get the team ID
+	teamId, _, err := r.PagerClient.GetTeambyName(businesService.Spec.Team)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("could not get team by name: %w", err)
+	}
+
+	//Convert the BusinessService CRD to a BusinessService struct
+	pagerbusinesService := pd.BusinessServiceSpectoBusinessService(businesService, teamId)
+
+	if !exists {
+		id, err := r.PagerClient.CreateBusinessService(pagerbusinesService)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("could not create business service: %w", err)
+		}
+
+		businesService.Status.ID = id
+		return ctrl.Result{}, nil
+	}
+
+	err = r.PagerClient.UpdateBusinessService(pagerbusinesService)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("could not update business service: %w", err)
+	}
+
+	// Check if the BusinessService instance is marked for deletion
+	if businesService.DeletionTimestamp.IsZero() {
+		if !controllerutil.ContainsFinalizer(&businesService, businesServiceFinalizer) {
+
+			controllerutil.AddFinalizer(&businesService, businesServiceFinalizer)
+			if err := r.Update(ctx, &businesService); err != nil {
+				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
+			}
+		}
+	} else {
+		if controllerutil.ContainsFinalizer(&businesService, businesServiceFinalizer) {
+			// Run finalization logic for BusinessService
+			// If the finalization logic fails, don't remove the finalizer so
+			// that we can retry during the next reconciliation.
+
+			log.Info("Deleting BusinessService", "ID", businesService.Status.ID, "Name", businesService.Name)
+			err := r.PagerClient.DeleteBusinessService(businesService.Status.ID)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("could not delete business service: %w", err)
+			}
+
+			// Remove the finalizer
+			controllerutil.RemoveFinalizer(&businesService, businesServiceFinalizer)
+			if err := r.Client.Update(ctx, &businesService, &client.UpdateOptions{}); err != nil {
+				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
+			}
+
+			return ctrl.Result{}, nil
+		}
+	}
 
 	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *BusinessServiceReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	r.recorder = mgr.GetEventRecorderFor("businessservice")
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&pagerdutyv1beta1.BusinessService{}).
 		Complete(r)

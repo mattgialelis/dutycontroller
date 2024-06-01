@@ -59,6 +59,7 @@ func main() {
 	var probeAddr string
 	var secureMetrics bool
 	var enableHTTP2 bool
+	var pagerdutyToken string
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
@@ -68,6 +69,9 @@ func main() {
 		"If set the metrics endpoint is served securely")
 	flag.BoolVar(&enableHTTP2, "enable-http2", false,
 		"If set, HTTP/2 will be enabled for the metrics and webhook servers")
+
+	flag.StringVar(&pagerdutyToken, "pagerduty-token", os.Getenv("PAGERDUTY_TOKEN"), "Pagerduty token")
+
 	opts := zap.Options{
 		Development: true,
 	}
@@ -125,15 +129,16 @@ func main() {
 	}
 
 	//Start the pagerduty client
-	pagerduty, err := pd.NewPagerduty()
+	pagerduty, err := pd.NewPagerduty(pagerdutyToken, 30)
 	if err != nil {
 		setupLog.Error(err, "Unable to start pagerduty client")
 		os.Exit(1)
 	}
 
 	if err = (&pagerdutycontrollers.BusinessServiceReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		PagerClient: pagerduty,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "BusinessService")
 		os.Exit(1)

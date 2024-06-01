@@ -32,7 +32,7 @@ type BusinessServiceSpec struct {
 
 // BusinessServiceStatus defines the observed state of BusinessService
 type BusinessServiceStatus struct {
-	ID string `json:"id"`
+	ID string `json:"id,omitempty"`
 }
 
 // +kubebuilder:object:root=true

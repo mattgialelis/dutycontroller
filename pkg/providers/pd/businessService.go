@@ -67,10 +67,10 @@ func (pd *Pagerduty) CreateBusinessService(businessService BusinessService) (str
 
 	bservice, err := pd.client.CreateBusinessServiceWithContext(context.Background(), input)
 	if err != nil {
-		return bservice.ID, err
+		return "", err
 	}
 
-	return "", nil
+	return bservice.ID, nil
 }
 
 // Updates a business service
@@ -99,17 +99,11 @@ func (pd *Pagerduty) UpdateBusinessService(businessService BusinessService) erro
 // Input:
 //
 //	name:  Name of the business service
-func (pd *Pagerduty) DeleteBusinessService(name string) error {
+func (pd *Pagerduty) DeleteBusinessService(id string) error {
 
-	id, _, err := pd.GetBusinessServicebyName(name)
+	err := pd.client.DeleteBusinessServiceWithContext(context.Background(), id)
 	if err != nil {
 		return err
-	}
-
-	err = pd.client.DeleteBusinessServiceWithContext(context.Background(), id)
-	if err != nil {
-		return err
-
 	}
 
 	return nil
