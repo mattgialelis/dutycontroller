@@ -115,7 +115,10 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		}
 
 		if businessSeriviceId != "" {
-			r.PagerClient.AssociateServiceBusiness(id, businessSeriviceId)
+			err := r.PagerClient.AssociateServiceBusiness(id, businessSeriviceId)
+			if err != nil {
+				log.Error(err, "could not associate service with business service")
+			}
 		}
 
 		service.Status.ID = id
@@ -129,7 +132,10 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	if businessSeriviceId != "" {
-		r.PagerClient.AssociateServiceBusiness(service.Status.ID, businessSeriviceId)
+		err := r.PagerClient.AssociateServiceBusiness(service.Status.ID, businessSeriviceId)
+		if err != nil {
+			log.Error(err, "could not associate service with business service")
+		}
 	}
 
 	// Check if the BusinessService instance is marked for deletion

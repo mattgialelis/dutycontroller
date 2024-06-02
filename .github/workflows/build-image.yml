@@ -42,7 +42,7 @@ jobs:
         version: ${{ env.GOLANGCI_VERSION }}
         skip-pkg-cache: true
         skip-build-cache: true
-        args: --timeout=30m
+        args: --timeout=30m --config=.golangci.yml
 
   build:
     name: Build Docker image
