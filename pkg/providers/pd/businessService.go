@@ -15,8 +15,8 @@ type BusinessService struct {
 	TeamId         string `json:"team"`
 }
 
-// TeamID must be passed in as in the  pagerdutyv1beta1.BusinessService we are using the Team name, this allows us to look up the team ID either via a
-// kube resource or a direct call to the pagerduty API
+// TeamID must be passed in as in the  pagerdutyv1beta1.BusinessService we are using the Team name,
+// this allows us to look up the team ID either via a kube resource or a direct call to the pagerduty API
 func BusinessServiceSpectoBusinessService(bs pagerdutyv1beta1.BusinessService, teamId string) BusinessService {
 	return BusinessService{
 		Name:           bs.Name,

@@ -5,15 +5,29 @@ import (
 	"fmt"
 	"log"
 
+	pagerdutyv1beta1 "github.com/mattgialelis/dutycontroller/api/v1beta1"
+
 	"github.com/PagerDuty/go-pagerduty"
 )
 
 type Service struct {
 	Name               string
 	Description        string
+	Status             string
 	EscalationPolicyID string
 	AutoResolveTimeout int
 	AcknowedgeTimeout  int
+}
+
+func ServicesSpectoService(bs pagerdutyv1beta1.Services, EscalationPolicyID string) Service {
+	return Service{
+		Name:               bs.Name,
+		Description:        bs.Spec.Description,
+		Status:             bs.Spec.Status,
+		EscalationPolicyID: EscalationPolicyID,
+		AutoResolveTimeout: bs.Spec.AutoResolveTimeout,
+		AcknowedgeTimeout:  bs.Spec.AcknowedgeTimeout,
+	}
 }
 
 func (s *Service) ToPagerDutyService() pagerduty.Service {
@@ -62,14 +76,9 @@ func (p *Pagerduty) UpdatePagerDutyService(service Service) error {
 	return nil
 }
 
-func (p *Pagerduty) DeletePagerDutyService(name string) error {
+func (p *Pagerduty) DeletePagerDutyService(id string) error {
 
-	service, _, err := p.GetPagerDutyServiceByNameDirect(name)
-	if err != nil {
-		return fmt.Errorf("failed to get service by name: %w", err)
-	}
-
-	err = p.client.DeleteServiceWithContext(context.Background(), service.ID)
+	err := p.client.DeleteServiceWithContext(context.Background(), id)
 	if err != nil {
 		return fmt.Errorf("failed to delete service: %w", err)
 	}
@@ -82,7 +91,10 @@ func (p *Pagerduty) GetPagerDutyServiceByNameDirect(name string) (pagerduty.Serv
 	var allServices []pagerduty.Service
 	var offset uint = 0
 	for {
-		services, err := p.client.ListServicesPaginated(context.Background(), pagerduty.ListServiceOptions{Limit: 100, Offset: offset})
+		services, err := p.client.ListServicesPaginated(
+			context.Background(),
+			pagerduty.ListServiceOptions{Limit: 100, Offset: offset},
+		)
 		if err != nil {
 			log.Println("Failed to refresh PagerDuty service cache:", err)
 			return pagerduty.Service{}, false, err

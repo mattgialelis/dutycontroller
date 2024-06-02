@@ -1,0 +1,9 @@
+apiVersion: pagerduty.dutycontroller.io/v1beta1
+kind: Services
+metadata:
+  labels:
+    app.kubernetes.io/name: dutycontroller
+    app.kubernetes.io/managed-by: kustomize
+  name: services-sample
+spec:
+  # TODO(user): Add fields here

@@ -1,0 +1,72 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.14.0
+  name: services.pagerduty.dutycontroller.io
+spec:
+  group: pagerduty.dutycontroller.io
+  names:
+    kind: Services
+    listKind: ServicesList
+    plural: services
+    singular: services
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: Services is the Schema for the services API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ServicesSpec defines the desired state of Services
+            properties:
+              acknowledgeTimeout:
+                type: integer
+              autoResolveTimeout:
+                type: integer
+              businessService:
+                type: string
+              description:
+                type: string
+              escalationPolicy:
+                type: string
+              status:
+                type: string
+            required:
+            - acknowledgeTimeout
+            - autoResolveTimeout
+            - businessService
+            - description
+            - escalationPolicy
+            - status
+            type: object
+          status:
+            description: ServicesStatus defines the observed state of Services
+            properties:
+              id:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

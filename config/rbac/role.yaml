@@ -30,3 +30,29 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - pagerduty.dutycontroller.io
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - pagerduty.dutycontroller.io
+  resources:
+  - services/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - pagerduty.dutycontroller.io
+  resources:
+  - services/status
+  verbs:
+  - get
+  - patch
+  - update

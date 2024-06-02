@@ -79,7 +79,11 @@ func (pd *Pagerduty) refreshCache() error {
 	defer pd.mu.Unlock()
 
 	for {
-		services, err := pd.client.ListServicesPaginated(context.Background(), pagerduty.ListServiceOptions{Limit: 100, Offset: offset})
+		services, err := pd.client.ListServicesPaginated(
+			context.Background(),
+			pagerduty.ListServiceOptions{Limit: 100, Offset: offset},
+		)
+
 		if err != nil {
 			log.Println("Failed to refresh PagerDuty service cache:", err)
 			return err

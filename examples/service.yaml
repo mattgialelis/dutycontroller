@@ -1,0 +1,11 @@
+apiVersion: pagerduty.dutycontroller.io/v1beta1
+kind: Services
+metadata:
+  name: my-service
+spec:
+  acknowledgeTimeout: 300
+  autoResolveTimeout: 600
+  businessService: "example-businessservice"
+  description: "My service"
+  escalationPolicy: "test1-ep"
+  status: "Active"

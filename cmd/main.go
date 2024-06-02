@@ -21,11 +21,10 @@ import (
 	"flag"
 	"os"
 
-	pagerdutycontrollers "github.com/mattgialelis/dutycontroller/pkg/controller/pagerduty"
+	businessservice "github.com/mattgialelis/dutycontroller/pkg/controller/pagerduty/businessservice"
+	services "github.com/mattgialelis/dutycontroller/pkg/controller/pagerduty/services"
 	"github.com/mattgialelis/dutycontroller/pkg/providers/pd"
 
-	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
-	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -135,12 +134,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&pagerdutycontrollers.BusinessServiceReconciler{
+	if err = (&businessservice.BusinessServiceReconciler{
 		Client:      mgr.GetClient(),
 		Scheme:      mgr.GetScheme(),
 		PagerClient: pagerduty,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "BusinessService")
+		os.Exit(1)
+	}
+	if err = (&services.ServicesReconciler{
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		PagerClient: pagerduty,
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Services")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
