@@ -59,7 +59,7 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	defer func() {
 		if service.DeletionTimestamp.IsZero() {
 			if err := r.Status().Update(ctx, &service); err != nil {
-				log.Error(err, "unable to update Business Service status")
+				log.Error(err, "unable to update Service status")
 			}
 		}
 	}()
@@ -74,7 +74,7 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	//Lookups the BusinessService to get its ID first looks in the cluster and if not found fetches from PagerDuty
-	if service.Spec.BusinessService != "" {
+	if service.Spec.BusinessService != "" && service.DeletionTimestamp.IsZero() {
 		if err := r.Get(ctx, client.ObjectKey{
 			Namespace: req.Namespace,
 			Name:      service.Spec.BusinessService,
