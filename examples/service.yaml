@@ -6,6 +6,8 @@ spec:
   acknowledgeTimeout: 300
   autoResolveTimeout: 600
   businessService: "example-businessservice"
-  description: "My service"
+  description: "My services"
   escalationPolicy: "test1-ep"
   status: "Active"
+
+

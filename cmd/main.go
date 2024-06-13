@@ -22,6 +22,7 @@ import (
 	"os"
 
 	businessservice "github.com/mattgialelis/dutycontroller/pkg/controller/pagerduty/businessservice"
+	orchestrationroutes "github.com/mattgialelis/dutycontroller/pkg/controller/pagerduty/orchestrationroutes"
 	services "github.com/mattgialelis/dutycontroller/pkg/controller/pagerduty/services"
 	"github.com/mattgialelis/dutycontroller/pkg/providers/pd"
 
@@ -148,6 +149,14 @@ func main() {
 		PagerClient: pagerduty,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Services")
+		os.Exit(1)
+	}
+	if err = (&orchestrationroutes.OrchestrationroutesReconciler{
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		PagerClient: pagerduty,
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Orchestrationroutes")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

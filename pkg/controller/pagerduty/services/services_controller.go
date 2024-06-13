@@ -19,6 +19,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"time"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -55,15 +56,6 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	var businessService pagerdutyv1beta1.BusinessService
 	var businessSeriviceId string
 
-	//Defers the update of the Service status
-	defer func() {
-		if service.DeletionTimestamp.IsZero() {
-			if err := r.Status().Update(ctx, &service); err != nil {
-				log.Error(err, "unable to update Service status")
-			}
-		}
-	}()
-
 	// Fetch the Service instance
 	if err := r.Get(ctx, req.NamespacedName, &service); err != nil {
 		//do not requeue if the resource does not exist
@@ -73,8 +65,17 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{}, fmt.Errorf("get resource: %w", err)
 	}
 
+	//Defers the update of the Service status
+	defer func() {
+		if service.DeletionTimestamp.IsZero() {
+			if err := r.Status().Update(ctx, &service); err != nil {
+				log.Error(err, "unable to update Service status")
+			}
+		}
+	}()
+
 	//Lookups the BusinessService to get its ID first looks in the cluster and if not found fetches from PagerDuty
-	if service.Spec.BusinessService != "" && service.DeletionTimestamp.IsZero() {
+	if service.Spec.BusinessService != "" {
 		if err := r.Get(ctx, client.ObjectKey{
 			Namespace: req.Namespace,
 			Name:      service.Spec.BusinessService,
@@ -114,10 +115,12 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, fmt.Errorf("could not create service: %w", err)
 		}
 
+		//Wait for the service to be created
+		time.Sleep(1 * time.Second)
 		if businessSeriviceId != "" {
 			err := r.PagerClient.AssociateServiceBusiness(id, businessSeriviceId)
 			if err != nil {
-				log.Error(err, "could not associate service with business service")
+				log.Error(err, "could not associate service with business service", "businessSeriviceId", businessSeriviceId, "serviceId", service.Status.ID)
 			}
 		}
 
@@ -134,7 +137,7 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	if businessSeriviceId != "" {
 		err := r.PagerClient.AssociateServiceBusiness(service.Status.ID, businessSeriviceId)
 		if err != nil {
-			log.Error(err, "could not associate service with business service")
+			log.Error(err, "could not associate service with business service", "businessSeriviceId", businessSeriviceId, "serviceId", service.Status.ID)
 		}
 	}
 

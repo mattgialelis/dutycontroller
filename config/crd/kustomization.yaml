@@ -4,6 +4,7 @@
 resources:
 - bases/pagerduty.dutycontroller.io_businessservices.yaml
 - bases/pagerduty.dutycontroller.io_services.yaml
+- bases/pagerduty.dutycontroller.io_orchestrationroutes.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
 
 patches:
@@ -15,6 +16,7 @@ patches:
 # patches here are for enabling the CA injection for each CRD
 #- path: patches/cainjection_in_businessservices.yaml
 #- path: patches/cainjection_in_services.yaml
+#- path: patches/cainjection_in_orchestrationroutes.yaml
 #+kubebuilder:scaffold:crdkustomizecainjectionpatch
 
 # [WEBHOOK] To enable webhook, uncomment the following section
