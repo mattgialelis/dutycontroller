@@ -12,6 +12,7 @@ import (
 
 type Pagerduty struct {
 	client       *pagerduty.Client
+	apiKey       string
 	serivceCache []pagerduty.Service
 	refresh      time.Duration
 	mu           sync.Mutex
@@ -36,6 +37,7 @@ func NewPagerduty(authToken string, refreshInterval int) (*Pagerduty, error) {
 
 	pd := &Pagerduty{
 		client:  client,
+		apiKey:  authToken,
 		refresh: time.Duration(refreshInterval) * time.Second,
 	}
 

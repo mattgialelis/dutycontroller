@@ -34,6 +34,32 @@ rules:
 - apiGroups:
   - pagerduty.dutycontroller.io
   resources:
+  - orchestrationroutes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - pagerduty.dutycontroller.io
+  resources:
+  - orchestrationroutes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - pagerduty.dutycontroller.io
+  resources:
+  - orchestrationroutes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - pagerduty.dutycontroller.io
+  resources:
   - services
   verbs:
   - create

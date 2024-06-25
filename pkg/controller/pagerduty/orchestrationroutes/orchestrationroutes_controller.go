@@ -20,11 +20,14 @@ import (
 	"context"
 	"fmt"
 
+	"k8s.io/apimachinery/pkg/util/json"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -33,7 +36,7 @@ import (
 )
 
 const (
-	orchestrationRouteFinalizer = "orchestrationRoute.dutycontroller.io/finalizer"
+	orchestrationRouteFinalizer = "orchestrationroute.dutycontroller.io/finalizer"
 )
 
 // OrchestrationroutesReconciler reconciles a Orchestrationroutes object
@@ -54,7 +57,7 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 
 	var orchestrationRoute pagerdutyv1beta1.Orchestrationroutes
 
-	// Fetch the BusinessService instance
+	// Fetch the Orchestratoion instance
 	if err := r.Get(ctx, req.NamespacedName, &orchestrationRoute); err != nil {
 		//do not requeue if the resource does not exist
 		if apierrors.IsNotFound(err) {
@@ -63,32 +66,31 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 		return ctrl.Result{}, fmt.Errorf("get resource: %w", err)
 	}
 
-	defer func() {
-		if orchestrationRoute.DeletionTimestamp.IsZero() {
-			if err := r.Status().Update(ctx, &orchestrationRoute); err != nil {
-				log.Error(err, "unable to update orchestration Route status")
-			}
-		}
-	}()
-
-	// Check if the BusinessService instance is marked for deletion
+	// Check if the Orchestratoion instance is marked for deletion
 	if orchestrationRoute.DeletionTimestamp.IsZero() {
 		if !controllerutil.ContainsFinalizer(&orchestrationRoute, orchestrationRouteFinalizer) {
-
 			controllerutil.AddFinalizer(&orchestrationRoute, orchestrationRouteFinalizer)
 			if err := r.Update(ctx, &orchestrationRoute); err != nil {
 				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
 			}
+			return ctrl.Result{}, nil
 		}
 	} else {
 		if controllerutil.ContainsFinalizer(&orchestrationRoute, orchestrationRouteFinalizer) {
-			// Run finalization logic for BusinessService
-			// If the finalization logic fails, don't remove the finalizer so
-			// that we can retry during the next reconciliation.
+			//Delete all routes
+			for _, route := range orchestrationRoute.Spec.ServiceRoutes {
+				serviceID, err := r.LookupService(ctx, req.Namespace, route.ServiceRef)
+				if err != nil {
+					return ctrl.Result{}, fmt.Errorf("could not find the service: %w", err)
+				}
 
-			err := r.PagerClient.DeleteBusinessService(orchestrationRoute.Status.ID)
-			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("could not delete orchestration Route: %w", err)
+				orhcestrationRoute := pd.ServiceRouteToOrchestrationRoute(serviceID, route)
+
+				err = r.PagerClient.DeleteOrchestrationServiceRoute(orhcestrationRoute)
+				if err != nil {
+					log.Error(err, "could not delete orchestration route")
+					return ctrl.Result{}, fmt.Errorf("coudlnt delete orchestration route: %w", err)
+				}
 			}
 
 			// Remove the finalizer
@@ -100,6 +102,84 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 			return ctrl.Result{}, nil
 		}
 	}
+
+	s := client.MergeFrom(orchestrationRoute.DeepCopy())
+	// Defer update of Service status
+	defer func() {
+		if err := r.Status().Patch(ctx, &orchestrationRoute, s); err != nil {
+			log.Error(err, "unable to update Service status")
+		}
+	}()
+
+	maxRoutes := len(orchestrationRoute.Spec.ServiceRoutes)
+
+	// Create Orchestration route.
+	for routeIndex, route := range orchestrationRoute.Spec.ServiceRoutes {
+		log.Info("Processing route", "route", route)
+		//Lookup Service
+		serviceID, err := r.LookupService(ctx, req.Namespace, route.ServiceRef)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("could not find the service: %w", err)
+		}
+
+		//Check if Route exists
+		exists, err := r.PagerClient.DoesRouteExist(route.EventOrchestration, serviceID)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("could not check if route exists: %w", err)
+		}
+
+		orhcestrationRoute := pd.ServiceRouteToOrchestrationRoute(serviceID, route)
+
+		if !exists {
+			log.Info("Route does not exist, creating route", "route", orhcestrationRoute)
+			err := r.PagerClient.AddOrchestrationServiceRoute(orhcestrationRoute)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("error creating Orchestration route: %w", err)
+			}
+		} else {
+			// Unmarshal last applied routes
+			lastAppleidRoutes := []pagerdutyv1beta1.ServiceRoute{}
+			if orchestrationRoute.Status.LastAppliedRoutes != "" {
+				err := json.Unmarshal([]byte(orchestrationRoute.Status.LastAppliedRoutes), &lastAppleidRoutes)
+				if err != nil {
+					return ctrl.Result{}, fmt.Errorf("error unmarshalling last applied routes: %w", err)
+				}
+
+				// Compare routes
+				removedRoutes := CompareRoutes(lastAppleidRoutes, orchestrationRoute.Spec.ServiceRoutes)
+
+				for _, removedRoute := range removedRoutes {
+					serivceIdToRemove, err := r.LookupService(ctx, req.Namespace, removedRoute.ServiceRef)
+					if err != nil {
+						return ctrl.Result{}, fmt.Errorf("could not find the service: %w", err)
+					}
+
+					err = r.PagerClient.DeleteOrchestrationServiceRoute(pd.ServiceRouteToOrchestrationRoute(serivceIdToRemove, removedRoute))
+					if err != nil {
+						return ctrl.Result{}, fmt.Errorf("could not delete orchestration route: %w", err)
+					}
+				}
+			}
+
+			log.Info("Route exists, updating route", "route", orhcestrationRoute)
+			// Update route
+			// err = r.PagerClient.UpdateOrchestrationServiceRoute(orhcestrationRoute)
+			// if err != nil {
+			// 	return ctrl.Result{}, fmt.Errorf("error updating Orchestration route: %w", err)
+			// }
+		}
+
+		if routeIndex == maxRoutes-1 {
+			routesApplied, err := json.Marshal(orchestrationRoute.Spec.ServiceRoutes)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("error marshalling json into Last applied routes")
+			}
+
+			orchestrationRoute.Status.LastAppliedRoutes = string(routesApplied)
+			return ctrl.Result{}, nil
+		}
+	}
+
 	return ctrl.Result{}, nil
 }
 
@@ -108,5 +188,54 @@ func (r *OrchestrationroutesReconciler) SetupWithManager(mgr ctrl.Manager) error
 	r.recorder = mgr.GetEventRecorderFor("orchestrationroutes-controller")
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&pagerdutyv1beta1.Orchestrationroutes{}).
+		WithOptions(controller.Options{MaxConcurrentReconciles: 1}).
 		Complete(r)
+}
+
+func (r *OrchestrationroutesReconciler) LookupService(ctx context.Context, namespace string, serviceName string) (string, error) {
+	var service pagerdutyv1beta1.Services
+
+	if err := r.Get(ctx, client.ObjectKey{
+		Namespace: namespace,
+		Name:      serviceName,
+	}, &service); err != nil {
+		if apierrors.IsNotFound(err) {
+			pagerDutyService, _, err := r.PagerClient.GetPagerDutyServiceByNameDirect(serviceName)
+			if err != nil {
+				return "", fmt.Errorf("could not get  service by name: %w", err)
+			}
+			return pagerDutyService.ID, nil
+		} else {
+			return "", fmt.Errorf("get Service: %w", err)
+		}
+	} else {
+		return service.Status.ID, nil
+	}
+}
+
+func CompareRoutes(oldRoutes, newRoutes []pagerdutyv1beta1.ServiceRoute) []pagerdutyv1beta1.ServiceRoute {
+	// Store removed routes
+	var removedRoutes []pagerdutyv1beta1.ServiceRoute
+
+	// Loop through old routes
+	for _, oldRoute := range oldRoutes {
+		found := false
+
+		// Check if route exists in new routes
+		for _, newRoute := range newRoutes {
+			if oldRoute.EventOrchestration == newRoute.EventOrchestration &&
+				oldRoute.Label == newRoute.Label &&
+				oldRoute.ServiceRef == newRoute.ServiceRef {
+				found = true
+				break
+			}
+		}
+
+		// If not found, it's removed
+		if !found {
+			removedRoutes = append(removedRoutes, oldRoute)
+		}
+	}
+
+	return removedRoutes
 }

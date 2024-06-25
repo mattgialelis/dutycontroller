@@ -22,14 +22,19 @@ import (
 
 // OrchestrationroutesSpec defines the desired state of Orchestrationroutes
 type OrchestrationroutesSpec struct {
-	EventOrchestrationName string   `json:"eventOrchestrationName"`
-	Expression             []string `json:"expression"`
-	ServiceName            string   `json:"routeTo"`
+	ServiceRoutes []ServiceRoute `json:"serviceRoutes"`
+}
+
+type ServiceRoute struct {
+	EventOrchestration string   `json:"eventOrchestration"`
+	Label              string   `json:"label"`
+	ServiceRef         string   `json:"serviceRef"`
+	Conditions         []string `json:"conditions,omitempty"`
 }
 
 // OrchestrationroutesStatus defines the observed state of Orchestrationroutes
 type OrchestrationroutesStatus struct {
-	RouteServiceId string `json:"routeTo"`
+	LastAppliedRoutes string `json:"lastAppliedRoutes"`
 }
 
 //+kubebuilder:object:root=true

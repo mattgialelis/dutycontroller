@@ -1,8 +1,0 @@
-apiVersion: pagerduty.dutycontroller.io/v1beta1
-kind: BusinessService
-metadata:
-  name: example-businessservice
-spec:
-  description: "Example DescriptionNew"
-  pointOfContact: "Example Contact"
-  team: "Example Team"

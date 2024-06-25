@@ -53,8 +53,6 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	log := log.FromContext(ctx)
 	log.WithValues("service", req.NamespacedName)
 	var service pagerdutyv1beta1.Services
-	var businessService pagerdutyv1beta1.BusinessService
-	var businessSeriviceId string
 
 	// Fetch the Service instance
 	if err := r.Get(ctx, req.NamespacedName, &service); err != nil {
@@ -65,94 +63,26 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{}, fmt.Errorf("get resource: %w", err)
 	}
 
-	//Defers the update of the Service status
+	s := client.MergeFrom(service.DeepCopy())
+	// Defer update of Service status
 	defer func() {
-		if service.DeletionTimestamp.IsZero() {
-			if err := r.Status().Update(ctx, &service); err != nil {
-				log.Error(err, "unable to update Service status")
-			}
+		if err := r.Status().Patch(ctx, &service, s); err != nil {
+			log.Error(err, "unable to update Service status")
 		}
 	}()
 
-	//Lookups the BusinessService to get its ID first looks in the cluster and if not found fetches from PagerDuty
-	if service.Spec.BusinessService != "" {
-		if err := r.Get(ctx, client.ObjectKey{
-			Namespace: req.Namespace,
-			Name:      service.Spec.BusinessService,
-		}, &businessService); err != nil {
-			if apierrors.IsNotFound(err) {
-				log.Info("BusinessService not found in cluster, fetching from PagerDuty", "namespace", req.Namespace, "name", service.Spec.BusinessService)
-				businessSeriviceId, _, err = r.PagerClient.GetBusinessServicebyName(req.Name)
-				if err != nil {
-					return ctrl.Result{}, fmt.Errorf("could not get business service by name: %w", err)
-				}
-			} else {
-				return ctrl.Result{}, fmt.Errorf("get BusinessService: %w", err)
-			}
-		} else {
-			businessSeriviceId = businessService.Status.ID
-		}
-	}
-
-	//Check if the Service instance exists
-	_, exists, err := r.PagerClient.GetPagerDutyServiceByNameDirect(req.Name)
-	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("could not get service by name: %w", err)
-	}
-
-	//Get escalation policy ID
-	escalationPolicyId, _, err := r.PagerClient.GetEscalationPolicyByName(service.Spec.EscalationPolicy)
-	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("could not get escalation policy by name: %w", err)
-	}
-
-	//Convert the Service CRD to a Service struct
-	pagerService := pd.ServicesSpectoService(service, escalationPolicyId)
-
-	if !exists {
-		id, err := r.PagerClient.CreatePagerDutyService(pagerService)
-		if err != nil {
-			return ctrl.Result{}, fmt.Errorf("could not create service: %w", err)
-		}
-
-		//Wait for the service to be created
-		time.Sleep(1 * time.Second)
-		if businessSeriviceId != "" {
-			err := r.PagerClient.AssociateServiceBusiness(id, businessSeriviceId)
-			if err != nil {
-				log.Error(err, "could not associate service with business service", "businessSeriviceId", businessSeriviceId, "serviceId", service.Status.ID)
-			}
-		}
-
-		service.Status.ID = id
-		return ctrl.Result{}, nil
-	}
-
-	//Update the Service instance
-	err = r.PagerClient.UpdatePagerDutyService(pagerService)
-	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("could not update service: %w", err)
-	}
-
-	if businessSeriviceId != "" {
-		err := r.PagerClient.AssociateServiceBusiness(service.Status.ID, businessSeriviceId)
-		if err != nil {
-			log.Error(err, "could not associate service with business service", "businessSeriviceId", businessSeriviceId, "serviceId", service.Status.ID)
-		}
-	}
-
 	// Check if the BusinessService instance is marked for deletion
 	if service.DeletionTimestamp.IsZero() {
+		// Check and add finalizer for deletion
 		if !controllerutil.ContainsFinalizer(&service, serviceFinalizer) {
-
 			controllerutil.AddFinalizer(&service, serviceFinalizer)
+
 			if err := r.Update(ctx, &service); err != nil {
 				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
 			}
 		}
 	} else {
 		if controllerutil.ContainsFinalizer(&service, serviceFinalizer) {
-
 			log.Info("Deleting Service", "ID", service.Status.ID, "Name", service.Name)
 			err := r.PagerClient.DeletePagerDutyService(service.Status.ID)
 			if err != nil {
@@ -169,6 +99,52 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		}
 	}
 
+	// Get BusinessService ID
+	businessServiceId, err := r.getBusinessServiceId(ctx, &service)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("get business service id: %w", err)
+	}
+
+	// Get Escalation Policy ID
+	escalationPolicyId, err := r.getEscalationPolicyId(ctx, &service)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("get escalation policy id: %w", err)
+	}
+
+	// Convert CRD to PagerDuty service struct
+	pagerService := pd.ServicesSpectoService(service, escalationPolicyId)
+
+	//Check if the Service instance exists
+	_, exists, err := r.PagerClient.GetPagerDutyServiceByNameDirect(req.Name)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("could not get service by name: %w", err)
+	}
+
+	if !exists {
+		// Create Service
+		id, err := r.PagerClient.CreatePagerDutyService(pagerService)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("could not create service: %w", err)
+		}
+		service.Status.ID = id
+		log.Info("Created Service", "ID", id)
+	} else {
+		// Update Service
+		err = r.PagerClient.UpdatePagerDutyService(pagerService)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("could not update service: %w", err)
+		}
+		log.Info("Updated Service", "ID", service.Status.ID)
+	}
+
+	if businessServiceId != "" {
+		time.Sleep(1 * time.Second)
+		err := r.PagerClient.AssociateServiceBusiness(service.Status.ID, businessServiceId)
+		if err != nil {
+			log.Error(err, "could not associate service with business service", "businessSeriviceId", businessServiceId, "serviceId", service.Status.ID)
+		}
+	}
+
 	return ctrl.Result{}, nil
 }
 
@@ -179,4 +155,36 @@ func (r *ServicesReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&pagerdutyv1beta1.Services{}).
 		Complete(r)
+}
+
+func (r *ServicesReconciler) getEscalationPolicyId(ctx context.Context, service *pagerdutyv1beta1.Services) (string, error) {
+	escalationPolicyId, _, err := r.PagerClient.GetEscalationPolicyByName(service.Spec.EscalationPolicy)
+	if err != nil {
+		return "", fmt.Errorf("could not get escalation policy by name: %w", err)
+	}
+	return escalationPolicyId, nil
+}
+
+func (r *ServicesReconciler) getBusinessServiceId(ctx context.Context, service *pagerdutyv1beta1.Services) (string, error) {
+	log := log.FromContext(ctx)
+
+	if service.Spec.BusinessService != "" {
+		var businessService pagerdutyv1beta1.BusinessService
+		if err := r.Get(ctx, client.ObjectKey{
+			Namespace: service.Namespace,
+			Name:      service.Spec.BusinessService,
+		}, &businessService); err != nil {
+			if apierrors.IsNotFound(err) {
+				log.Info("BusinessService not found in cluster, fetching from PagerDuty", "namespace", service.Namespace, "name", service.Spec.BusinessService)
+				businessServiceId, _, err := r.PagerClient.GetBusinessServicebyName(service.Name)
+				if err != nil {
+					return "", fmt.Errorf("could not get business service by name: %w", err)
+				}
+				return businessServiceId, nil
+			}
+			return "", fmt.Errorf("get BusinessService: %w", err)
+		}
+		return businessService.Status.ID, nil
+	}
+	return "", nil
 }
