@@ -106,7 +106,7 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	// Get Escalation Policy ID
-	escalationPolicyId, err := r.getEscalationPolicyId(ctx, &service)
+	escalationPolicyId, err := r.getEscalationPolicyId(&service)
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("get escalation policy id: %w", err)
 	}
@@ -157,7 +157,7 @@ func (r *ServicesReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func (r *ServicesReconciler) getEscalationPolicyId(ctx context.Context, service *pagerdutyv1beta1.Services) (string, error) {
+func (r *ServicesReconciler) getEscalationPolicyId(service *pagerdutyv1beta1.Services) (string, error) {
 	escalationPolicyId, _, err := r.PagerClient.GetEscalationPolicyByName(service.Spec.EscalationPolicy)
 	if err != nil {
 		return "", fmt.Errorf("could not get escalation policy by name: %w", err)

@@ -89,7 +89,7 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 				err = r.PagerClient.DeleteOrchestrationServiceRoute(orhcestrationRoute)
 				if err != nil {
 					log.Error(err, "could not delete orchestration route")
-					return ctrl.Result{}, fmt.Errorf("coudlnt delete orchestration route: %w", err)
+					return ctrl.Result{}, fmt.Errorf("couldnt delete orchestration route: %w", err)
 				}
 			}
 

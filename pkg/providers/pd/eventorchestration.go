@@ -197,7 +197,7 @@ func (pd *Pagerduty) DeleteOrchestrationServiceRoute(OrchestrationRoute Orchestr
 	router.Sets[0].Rules = newRules
 
 	if len(newRules) == 0 {
-		err = pd.clearEventOrchestration(orchID, *router)
+		err = pd.clearEventOrchestration(orchID)
 		if err != nil {
 			return err
 		}
@@ -211,9 +211,9 @@ func (pd *Pagerduty) DeleteOrchestrationServiceRoute(OrchestrationRoute Orchestr
 	return nil
 }
 
-// This Custom fucntion is needed as the pagerduty module does not allow setting the rules to an empty array,
+// This Custom function is needed as the pagerduty module does not allow setting the rules to an empty array,
 // due to it being a pointer type as well as omitempty in the struct
-func (pd *Pagerduty) clearEventOrchestration(id string, e pagerduty.OrchestrationRouter) error {
+func (pd *Pagerduty) clearEventOrchestration(id string) error {
 	payload := `
 	{
 		"orchestration_path": {
