@@ -30,6 +30,7 @@ rules:
   - get
   - patch
   - update
+<<<<<<< HEAD
 - apiGroups:
   - pagerduty.dutycontroller.io
   resources:
@@ -56,3 +57,5 @@ rules:
   - get
   - patch
   - update
+=======
+>>>>>>> 6ab4144 (Fix the orchestration routes allow supporting many and emptying routes)
