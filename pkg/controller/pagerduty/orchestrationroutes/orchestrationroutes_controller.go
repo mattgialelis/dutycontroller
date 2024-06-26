@@ -115,7 +115,6 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 
 	// Create Orchestration route.
 	for routeIndex, route := range orchestrationRoute.Spec.ServiceRoutes {
-		log.Info("Processing route", "route", route)
 		//Lookup Service
 		serviceID, err := r.LookupService(ctx, req.Namespace, route.ServiceRef)
 		if err != nil {
@@ -162,11 +161,10 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 			}
 
 			log.Info("Route exists, updating route", "route", orhcestrationRoute)
-			// Update route
-			// err = r.PagerClient.UpdateOrchestrationServiceRoute(orhcestrationRoute)
-			// if err != nil {
-			// 	return ctrl.Result{}, fmt.Errorf("error updating Orchestration route: %w", err)
-			// }
+			err = r.PagerClient.UpdateOrchestrationServiceRoute(orhcestrationRoute)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("error updating Orchestration route: %w", err)
+			}
 		}
 
 		if routeIndex == maxRoutes-1 {

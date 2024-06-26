@@ -56,11 +56,6 @@ spec:
             properties:
               id:
                 type: string
-<<<<<<< HEAD
-=======
-            required:
-            - id
->>>>>>> 6ab4144 (Fix the orchestration routes allow supporting many and emptying routes)
             type: object
         type: object
     served: true

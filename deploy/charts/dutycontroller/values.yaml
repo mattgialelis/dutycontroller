@@ -1,0 +1,63 @@
+nameOverride: ""
+fullnameOverride: ""
+imagePullSecrets: []
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+replicaCount: 1
+image:
+  repository: ghcr.io/mattgialelis/dutycontroller
+  pullPolicy: IfNotPresent
+  # -- The image tag to use. The default is the chart appVersion.
+  tag: ""
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+rbac:
+  create: true
+
+monitoring:
+  enabled: false  # Set to true to enable metrics port
+  port: 8081      # Port for metrics endpoint
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+
+service:
+  type: ClusterIP
+  ports:
+    name: http
+    port: 8080  # Default port for your application
+    targetPort: http
+    protocol: TCP
+
+podAnnotations: {}
+
+podLabels: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

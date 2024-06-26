@@ -7,6 +7,7 @@
 bin/*
 Dockerfile.cross
 examples/
+deploy/charts/dutycontroller/crds/*.yaml
 
 # Test binary, built with `go test -c`
 *.test
