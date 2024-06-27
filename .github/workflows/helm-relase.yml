@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'deploy/charts/**'
+    workflow_dispatch: {}
 
 jobs:
   release:
@@ -21,10 +24,20 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        id: setup-go
+        with:
+          go-version-file: "go.mod"
+
       - name: Install Helm
         uses: azure/setup-helm@v4
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Make CRDS
+        run: |
+          make helm-crds
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0

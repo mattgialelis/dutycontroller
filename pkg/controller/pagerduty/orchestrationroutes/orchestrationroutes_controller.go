@@ -145,6 +145,7 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 				}
 
 				// Compare routes
+				//TODO: Move this outside of the loop and only do it once, or compare just this route to what exists
 				removedRoutes := CompareRoutes(lastAppleidRoutes, orchestrationRoute.Spec.ServiceRoutes)
 
 				for _, removedRoute := range removedRoutes {
