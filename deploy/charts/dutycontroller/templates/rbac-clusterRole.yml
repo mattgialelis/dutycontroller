@@ -1,0 +1,43 @@
+{{- if .Values.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "dutycontroller.fullname" . }}
+  labels:
+    {{- include "dutycontroller.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+    - "pagerduty.dutycontroller.io"
+    resources:
+    - "services"
+    - "orchestrationroutes"
+    - "businessservices"
+    verbs:
+    - "get"
+    - "list"
+    - "watch"
+  - apiGroups:
+    - "external-secrets.io"
+    resources:
+    - "services"
+    - "services/status"
+    - "services/finalizers"
+    - "orchestrationroutes"
+    - "orchestrationroutes/status"
+    - "orchestrationroutes/finalizers"
+    - "businessservices"
+    - "businessservices/status"
+    - "businessservices/finalizers"
+    verbs:
+    - "get"
+    - "update"
+    - "patch"
+  - apiGroups:
+    - ""
+    resources:
+    - "configmaps"
+    verbs:
+    - "get"
+    - "list"
+    - "watch"
+{{- end}}

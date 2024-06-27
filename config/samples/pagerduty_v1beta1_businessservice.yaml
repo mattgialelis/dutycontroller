@@ -1,0 +1,11 @@
+apiVersion: pagerduty.dutycontroller.io/v1beta1
+kind: BusinessService
+metadata:
+  labels:
+    app.kubernetes.io/name: dutycontroller
+    app.kubernetes.io/managed-by: kustomize
+  name: businessservice-sample
+spec:
+  description: "Example DescriptionNew"
+  pointOfContact: "Example Contact"
+  team: "Example Team"

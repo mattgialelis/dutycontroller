@@ -1,0 +1,47 @@
+ite_name: DutyController
+repo_url: https://github.com/mattgialelis/dutycontroller
+repo_name: dutycontroller
+edit_uri: edit/master/docs/
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: pink
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - content.action.edit
+    - content.code.annotate
+    - content.code.copy
+    - navigation.footer
+    - navigation.instant
+    - navigation.tracking
+  icon:
+    edit: material/pencil
+    view: material/eye
+nav:
+  - Overview: index.md
+  - ...
+  - How To Update These Docs: how_to_update.md
+plugins:
+  - awesome-pages
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+      fallback_to_build_date: false
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences

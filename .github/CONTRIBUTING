@@ -1,0 +1,32 @@
+# Contributing Guide
+
+We welcome contributions to this project and this guide should provide you with the necessary steps to contribute.
+
+## Getting Started
+
+1. Fork the repository to your own GitHub account.
+2. Clone the project to your machine.
+3. Create a branch locally with a succinct but descriptive name.
+
+## Changes and Commit
+
+1. Changes should be made on your own branch.
+2. Write a clear, concise and descriptive commit message for each commit. This is important as it allows others to understand what your commit does and whether it needs to be pulled into their local copy.
+3. Once your changes are ready and committed, push your changes to your fork on GitHub.
+
+## Pull Request
+
+1. Navigate to the original repository you created your fork from.
+2. Click the "Pull Request" button at the top of the repository.
+3. GitHub will then track the difference between your fork and the original repository. You can add a clear title and description to your pull request before you submit it.
+
+## Review
+
+1. Once a pull request is opened, maintainers will review the pull request and provide feedback.
+2. If changes are required, you can make them in your branch and then push the changes to your fork. The pull request will update automatically.
+
+## Merging
+
+1. Once your pull request is approved, it will be merged into the main codebase.
+
+Thank you for your contributions!

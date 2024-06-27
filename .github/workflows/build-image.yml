@@ -1,0 +1,66 @@
+name: Build Docker image
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    env:
+      GOLANGCI_VERSION: "v1.55.2"
+    name: Lint and Test
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version-file: "go.mod"
+
+    - name: Find the Go Cache
+      id: go
+      run: |
+        echo "::set-output name=build-cache::$(go env GOCACHE)"
+        echo "::set-output name=mod-cache::$(go env GOMODCACHE)"
+
+    - name: Cache the Go Build Cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.go.outputs.build-cache }}
+        key: ${{ runner.os }}-build-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
+
+    - name: Cache Go Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.go.outputs.mod-cache }}
+        key: ${{ runner.os }}-mod-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
+
+    - name: Lint
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: ${{ env.GOLANGCI_VERSION }}
+        skip-pkg-cache: true
+        skip-build-cache: true
+        args: --timeout=30m --config=.golangci.yml
+
+  build:
+    name: Build Docker image
+    needs: [lint-and-test]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build docker and push
+        uses: docker/build-push-action@v5
+        with:
+          push: false
+          tags: ghcr.io/mattgialelis/dutycontroller/dutycontroller:${{ github.sha}}

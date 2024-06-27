@@ -1,0 +1,27 @@
+# permissions for end users to edit businessservices.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: dutycontroller
+    app.kubernetes.io/managed-by: kustomize
+  name: businessservice-editor-role
+rules:
+- apiGroups:
+  - pagerduty.dutycontroller.io
+  resources:
+  - businessservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - pagerduty.dutycontroller.io
+  resources:
+  - businessservices/status
+  verbs:
+  - get

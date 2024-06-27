@@ -1,0 +1,19 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "dutycontroller.fullname" . }}-metrics
+  labels:
+    {{- include "dutycontroller.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "dutycontroller.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: {{ .Values.monitoring.port }}
+      path: /metrics
+      interval: 15s
+{{- end }}

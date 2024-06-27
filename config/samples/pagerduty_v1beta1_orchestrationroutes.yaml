@@ -1,0 +1,19 @@
+apiVersion: pagerduty.dutycontroller.io/v1beta1
+kind: Orchestrationroutes
+metadata:
+  labels:
+    app.kubernetes.io/name: dutycontroller
+    app.kubernetes.io/managed-by: kustomize
+  name: orchestrationroutes-sample
+spec:
+  serviceRoutes:
+    - eventOrchestration: "Grafana AlertManager"
+      label: "My  AlertManager"
+      serviceRef: "test"
+      conditions:
+        - "event.custom_details.component matches part 'my-service-b'"
+    - eventOrchestration: "Grafana AlertManager"
+      label: "My Serive AlertManager"
+      serviceRef: "my-service"
+      conditions:
+        - "event.custom_details.component matches part 'my-service-deleteme'"
