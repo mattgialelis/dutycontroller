@@ -2,6 +2,9 @@ nameOverride: ""
 fullnameOverride: ""
 imagePullSecrets: []
 
+# Controller Options
+leaderElect: false
+
 livenessProbe:
   httpGet:
     path: /
@@ -51,6 +54,20 @@ service:
     port: 8080  # Default port for your application
     targetPort: http
     protocol: TCP
+
+## Extra environment variables to add to container.
+extraEnv: []
+  # - name: PAGERDUTY_TOKEN
+  #   value: abc124
+
+# Note: THese are the secrets that are mounted as envFrom on the pod
+envFrom: []
+  # - secretRef:
+  #     name: test-secret
+
+# Create a dynamic manifests via values
+# This is ran thru the tpl function in the templates so variables can be used as normal
+extraObjects: []
 
 podAnnotations: {}
 
