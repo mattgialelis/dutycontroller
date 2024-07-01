@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/mattgialelis/dutycontroller/compare/v1.0.0...v1.0.1) (2024-07-01)
+
+
+### Bug Fixes
+
+* pipelines and bump release ([8918ccc](https://github.com/mattgialelis/dutycontroller/commit/8918ccc8ece528bc6de42783aaae5a0bd08c87c2))
+
 ## 1.0.0 (2024-06-29)
 
 
