@@ -42,7 +42,7 @@ rbac:
 
 monitoring:
   enabled: false  # Set to true to enable metrics port
-  port: 8081      # Port for metrics endpoint
+  port: 8080      # Port for metrics endpoint
   serviceMonitor:
     enabled: false
     additionalLabels: {}
@@ -51,7 +51,7 @@ service:
   type: ClusterIP
   ports:
     name: http
-    port: 8080  # Default port for your application
+    port: 8081  # Default port for your application
     targetPort: http
     protocol: TCP
 
@@ -63,11 +63,7 @@ extraEnv: []
 # Note: THese are the secrets that are mounted as envFrom on the pod
 envFrom: []
   # - secretRef:
-  #     name: test-secret
-
-# Create a dynamic manifests via values
-# This is ran thru the tpl function in the templates so variables can be used as normal
-extraObjects: []
+  #     name: dutycontroller-envs
 
 podAnnotations: {}
 
@@ -78,3 +74,22 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Create a dynamic manifests via values
+# This is ran thru the tpl function in the templates so variables can be used as normal
+extraObjects: []
+  # - apiVersion: external-secrets.io/v1beta1
+  #   kind: ExternalSecret
+  #   metadata:
+  #     name: dutycontroller-envs
+  #   spec:
+  #     data:
+  #     - remoteRef:
+  #         conversionStrategy: Default
+  #         decodingStrategy: None
+  #         key: pagerduty-token
+  #       secretKey: PAGERDUTY_TOKEN
+  #     refreshInterval: 1h
+  #     secretStoreRef:
+  #       kind: ClusterSecretStore
+  #       name: my-cluster-store
