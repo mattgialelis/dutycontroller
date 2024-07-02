@@ -37,9 +37,6 @@ plugins:
   - awesome-pages
   - search
   - mike
-  - git-revision-date-localized:
-      enable_creation_date: true
-      fallback_to_build_date: false
 markdown_extensions:
   - admonition
   - pymdownx.details
