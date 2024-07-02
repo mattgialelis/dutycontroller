@@ -7,11 +7,11 @@ leaderElect: false
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /healthz
     port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /readyz
     port: http
 
 replicaCount: 1
