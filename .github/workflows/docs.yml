@@ -1,8 +1,8 @@
 name: Publish docs
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -33,4 +33,4 @@ jobs:
 
       - run: mkdocs build
 
-      - run: ghp-import site -p -x site
+      - run: ghp-import site -p -x docs
