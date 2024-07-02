@@ -37,7 +37,6 @@ jobs:
           mike
 
       - run: |
-          git branch -D gh-pages
           git fetch
           git checkout gh-pages
           mike deploy --ignore --push  latest
