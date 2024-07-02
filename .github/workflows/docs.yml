@@ -28,6 +28,9 @@ jobs:
 
       - run: pip install mkdocs-material \
           mkdocs-git-revision-date-localized-plugin \
-          mkdocs-awesome-pages-plugin
+          mkdocs-awesome-pages-plugin \
+          ghp-import
 
-      - run: mkdocs gh-deploy --force
+      - run: mkdocs build
+
+      - run: ghp-import site -p -x site
