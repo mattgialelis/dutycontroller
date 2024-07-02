@@ -32,5 +32,6 @@ jobs:
       - run: |
           git fetch
           mike deploy --ignore --push  latest
+          mike set-default --push latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
