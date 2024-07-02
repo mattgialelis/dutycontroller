@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/mattgialelis/dutycontroller/compare/v1.0.1...v1.0.2) (2024-07-02)
+
+
+### Bug Fixes
+
+* try fix pipeline to ensure that mkdocs and other doesnt overide ([29f2c12](https://github.com/mattgialelis/dutycontroller/commit/29f2c12d67bc97eabdcbfb35537328e9b1748442))
+
 ## [1.0.1](https://github.com/mattgialelis/dutycontroller/compare/v1.0.0...v1.0.1) (2024-07-01)
 
 
