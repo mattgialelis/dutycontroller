@@ -11,7 +11,7 @@ jobs:
   deploy_docs_page:
    runs-on: ubuntu-20.04
    steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -37,6 +37,6 @@ jobs:
           mkdocs-awesome-pages-plugin \
           mike
 
-      - run: mike deploy --ignore --push  latest
+      - run: mike deploy --ignore --push -f latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
