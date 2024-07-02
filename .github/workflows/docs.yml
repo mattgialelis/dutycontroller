@@ -37,6 +37,6 @@ jobs:
           mkdocs-awesome-pages-plugin \
           mike
 
-      - run: mike deploy  --ignore "mkdocs.yml" --push  latest
+      - run: mike deploy --ignore --push  latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
