@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/mattgialelis/dutycontroller/compare/v1.0.2...v1.0.3) (2024-07-02)
+
+
+### Bug Fixes
+
+* try update to use mike to see if that works for managing the repos fiels ([06f53d3](https://github.com/mattgialelis/dutycontroller/commit/06f53d3d370fc6b45763018304e591d0ec7282f2))
+
 ## [1.0.2](https://github.com/mattgialelis/dutycontroller/compare/v1.0.1...v1.0.2) (2024-07-02)
 
 
