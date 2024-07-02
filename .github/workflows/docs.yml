@@ -6,11 +6,12 @@ on:
 
 permissions:
   contents: write
+
 jobs:
   deploy_docs_page:
    runs-on: ubuntu-20.04
    steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
@@ -36,8 +37,6 @@ jobs:
           mkdocs-awesome-pages-plugin \
           mike
 
-      - run: mkdocs build
-
-      - run: mike deploy -p --ignore "mkdocs.yml" latest
+      - run: mike deploy  --ignore "mkdocs.yml" --push  latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
