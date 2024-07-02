@@ -31,7 +31,7 @@ jobs:
 
       - run: |
           git fetch
-          mike deploy --push  latest
+          mike deploy --update-aliases --push  latest
           mike set-default --push latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
