@@ -38,6 +38,6 @@ jobs:
 
       - run: mkdocs build
 
-      - run: mike deploy --ignore "mkdocs.yml" latest
+      - run: mike deploy -p --ignore "mkdocs.yml" latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
