@@ -3,6 +3,16 @@ entries:
   dutycontroller:
   - apiVersion: v2
     appVersion: 1.0.3
+    created: "2024-07-02T15:29:28.035417165Z"
+    description: A Pagerduty Operator for Kubernetes
+    digest: c0a579b1d385e0f549243f02e108a7a37105781f44549653a3f719d783e5a820
+    name: dutycontroller
+    type: application
+    urls:
+    - https://github.com/mattgialelis/dutycontroller/releases/download/helm-chart-0.2.3/dutycontroller-0.2.3.tgz
+    version: 0.2.3
+  - apiVersion: v2
+    appVersion: 1.0.3
     created: "2024-07-02T14:48:11.038658552Z"
     description: A Pagerduty Operator for Kubernetes
     digest: 8c0c4cdff33ec2a593c18f9f4f1932346f1a45f76b09ac584ba2883b52b954e7
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://github.com/mattgialelis/dutycontroller/releases/download/helm-chart-0.2.0/dutycontroller-0.2.0.tgz
     version: 0.2.0
-generated: "2024-07-02T14:48:11.038675013Z"
+generated: "2024-07-02T15:29:28.035437814Z"
