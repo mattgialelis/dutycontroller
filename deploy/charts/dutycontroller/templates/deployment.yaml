@@ -44,7 +44,9 @@ spec:
           {{- if .Values.leaderElect }}
           - --enable-leader-election=true
           {{- end }}
+          {{- if .Values.monitoring.enabled }}
           - --metrics-bind-address=:{{ .Values.monitoring.port }}
+          {{- end }}
           {{- with .Values.extraEnv }}
           env:
             {{- toYaml . | nindent 12 }}
