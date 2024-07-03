@@ -19,6 +19,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"k8s.io/apimachinery/pkg/util/json"
 
@@ -118,7 +119,10 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 		//Lookup Service
 		serviceID, err := r.LookupService(ctx, req.Namespace, route.ServiceRef)
 		if err != nil {
-			return ctrl.Result{}, fmt.Errorf("could not find the service: %w", err)
+			return ctrl.Result{
+				Requeue:      true,
+				RequeueAfter: 30 * time.Second,
+			}, fmt.Errorf("could not find the service: %w", err)
 		}
 
 		//Check if Route exists
