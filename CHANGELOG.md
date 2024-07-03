@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0](https://github.com/mattgialelis/dutycontroller/compare/v1.0.3...v1.1.0) (2024-07-03)
+
+
+### Features
+
+* BREAKING moved business service to cluster scoped ([53a4f0d](https://github.com/mattgialelis/dutycontroller/commit/53a4f0d6f686e542061b3d6248b8d0fbab46818e))
+
+
+### Bug Fixes
+
+* Fix the chart monitoring ports ([e6dc646](https://github.com/mattgialelis/dutycontroller/commit/e6dc64696b1ceea47b2211e38af23dfd9cd84287))
+* helm fixes to better fit the the controller ([fbf1f3b](https://github.com/mattgialelis/dutycontroller/commit/fbf1f3bea701cb65d143cec7a612076036a7c396))
+* Pipline to ensure not triggering when not really needed ([1e5ddcf](https://github.com/mattgialelis/dutycontroller/commit/1e5ddcfa7023c6309a416c03c48ccb7995dfa41a))
+* working helm chart ([23d459a](https://github.com/mattgialelis/dutycontroller/commit/23d459a6d171c576692c86a187fb1ef2f42f90af))
+
+
+### Miscellaneous Chores
+
+* release 1.1.0 ([516204f](https://github.com/mattgialelis/dutycontroller/commit/516204fce52015265d01d2e5dbbe37d08dc8f134))
+
 ## [1.0.3](https://github.com/mattgialelis/dutycontroller/compare/v1.0.2...v1.0.3) (2024-07-02)
 
 
