@@ -85,6 +85,8 @@ func (r *BusinessServiceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			if err := r.Update(ctx, &businesService); err != nil {
 				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
 			}
+
+			return ctrl.Result{}, nil
 		}
 	} else {
 		if controllerutil.ContainsFinalizer(&businesService, businesServiceFinalizer) {
