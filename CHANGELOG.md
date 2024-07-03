@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/mattgialelis/dutycontroller/compare/v1.1.0...v1.1.1) (2024-07-03)
+
+
+### Bug Fixes
+
+* Add requeue ([941f686](https://github.com/mattgialelis/dutycontroller/commit/941f6868d6012da76373966ca49d8ddb876b0678))
+
 ## [1.1.0](https://github.com/mattgialelis/dutycontroller/compare/v1.0.3...v1.1.0) (2024-07-03)
 
 
