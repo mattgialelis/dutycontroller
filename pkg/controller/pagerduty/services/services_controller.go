@@ -22,6 +22,7 @@ import (
 	"time"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -30,6 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	pagerdutyv1beta1 "github.com/mattgialelis/dutycontroller/api/v1beta1"
+	"github.com/mattgialelis/dutycontroller/pkg/condtions"
 	"github.com/mattgialelis/dutycontroller/pkg/providers/pd"
 )
 
@@ -66,12 +68,19 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	s := client.MergeFrom(service.DeepCopy())
 	// Defer update of Service status
 	defer func() {
-		if err := r.Status().Patch(ctx, &service, s); err != nil {
-			log.Error(err, "unable to update Service status")
+		if service.DeletionTimestamp.IsZero() {
+			if err := r.Status().Patch(ctx, &service, s); err != nil {
+				log.Error(err, "unable to update Service status")
+			}
 		}
 	}()
 
-	// Check if the BusinessService instance is marked for deletion
+	// Get Conditions
+	// We do this here so we can use the condtions status in the rest of the function
+	createdCondition := condtions.GetCondition(service.Status.Conditions, condtions.ConditionReasonCreated)
+	busServiceCondition := condtions.GetCondition(service.Status.Conditions, condtions.ConditionReasonAssociated)
+
+	// Check if the Service instance is marked for deletion
 	if service.DeletionTimestamp.IsZero() {
 		// Check and add finalizer for deletion
 		if !controllerutil.ContainsFinalizer(&service, serviceFinalizer) {
@@ -83,10 +92,14 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		}
 	} else {
 		if controllerutil.ContainsFinalizer(&service, serviceFinalizer) {
+
 			log.Info("Deleting Service", "ID", service.Status.ID, "Name", service.Name)
-			err := r.PagerClient.DeletePagerDutyService(service.Status.ID)
-			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("could not delete pagerduty service: %w", err)
+
+			if createdCondition != nil && createdCondition.Status == v1.ConditionTrue {
+				err := r.PagerClient.DeletePagerDutyService(service.Status.ID)
+				if err != nil {
+					return ctrl.Result{}, fmt.Errorf("could not delete pagerduty service: %w", err)
+				}
 			}
 
 			// Remove the finalizer
@@ -126,23 +139,41 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("could not create service: %w", err)
 		}
+
+		if createdCondition == nil || createdCondition.Status != v1.ConditionTrue {
+			condtions.SetCondition(&service.Status.Conditions, condtions.ConditionReasonCreated, v1.ConditionTrue, "Service created successfully in PagerDuty")
+		}
+
 		service.Status.ID = id
 		log.Info("Created Service", "ID", id)
 	} else {
-		// Update Service
-		err = r.PagerClient.UpdatePagerDutyService(pagerService)
-		if err != nil {
-			return ctrl.Result{}, fmt.Errorf("could not update service: %w", err)
+		if createdCondition != nil && createdCondition.Status == v1.ConditionTrue {
+			// Update Service
+			err = r.PagerClient.UpdatePagerDutyService(pagerService)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("could not update service: %w", err)
+			}
+			log.Info("Updated Service", "ID", service.Status.ID)
+		} else {
+			log.Info("Service already exists in Pagerduty", "ID", service.Status.ID)
+			condtions.SetCondition(&service.Status.Conditions, condtions.ConditionReasonFailed, v1.ConditionTrue, "Service cannot be created, already exists in PagerDuty")
+			return ctrl.Result{}, nil
 		}
-		log.Info("Updated Service", "ID", service.Status.ID)
 	}
 
-	if businessServiceId != "" {
+	//TODO: add a check to see if the business service is associated with the service
+	//TODO: add a check to see if the business service chanaged
+	if businessServiceId != "" && busServiceCondition == nil || busServiceCondition.Status != v1.ConditionTrue {
 		time.Sleep(1 * time.Second)
 		err := r.PagerClient.AssociateServiceBusiness(service.Status.ID, businessServiceId)
 		if err != nil {
 			log.Error(err, "could not associate service with business service", "businessSeriviceId", businessServiceId, "serviceId", service.Status.ID)
+			return ctrl.Result{}, fmt.Errorf("could not associate service with business service: %w", err)
 		}
+
+		log.Info("Associated Service with BusinessService", "BusinessServiceID", businessServiceId, "ServiceID", service.Status.ID)
+		condtions.SetCondition(&service.Status.Conditions, condtions.ConditionReasonAssociated, v1.ConditionTrue, "Service associated with BusinessService")
+		return ctrl.Result{}, nil
 	}
 
 	return ctrl.Result{}, nil

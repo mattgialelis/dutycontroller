@@ -20,8 +20,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/mattgialelis/dutycontroller/pkg/condtions"
 	"github.com/mattgialelis/dutycontroller/pkg/providers/pd"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -71,6 +73,43 @@ func (r *BusinessServiceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		}
 	}()
 
+	// Get Conditions
+	// We do this here so we can use the condtions status in the rest of the function
+	createdCondition := condtions.GetCondition(businesService.Status.Conditions, condtions.ConditionReasonCreated)
+
+	// Check if the BusinessService instance is marked for deletion
+	if businesService.DeletionTimestamp.IsZero() {
+		if !controllerutil.ContainsFinalizer(&businesService, businesServiceFinalizer) {
+
+			controllerutil.AddFinalizer(&businesService, businesServiceFinalizer)
+			if err := r.Update(ctx, &businesService); err != nil {
+				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
+			}
+		}
+	} else {
+		if controllerutil.ContainsFinalizer(&businesService, businesServiceFinalizer) {
+			// Run finalization logic for BusinessService
+			// If the finalization logic fails, don't remove the finalizer so
+			// that we can retry during the next reconciliation.
+
+			if createdCondition != nil && createdCondition.Status == metav1.ConditionTrue {
+				log.Info("Deleting BusinessService", "ID", businesService.Status.ID, "Name", businesService.Name)
+				err := r.PagerClient.DeleteBusinessService(businesService.Status.ID)
+				if err != nil {
+					return ctrl.Result{}, fmt.Errorf("could not delete business service: %w", err)
+				}
+			}
+
+			// Remove the finalizer
+			controllerutil.RemoveFinalizer(&businesService, businesServiceFinalizer)
+			if err := r.Client.Update(ctx, &businesService, &client.UpdateOptions{}); err != nil {
+				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
+			}
+
+			return ctrl.Result{}, nil
+		}
+	}
+
 	// Check if the BusinessService instance exists
 	_, exists, err := r.PagerClient.GetBusinessServicebyName(req.Name)
 	if err != nil {
@@ -92,46 +131,29 @@ func (r *BusinessServiceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			return ctrl.Result{}, fmt.Errorf("could not create business service: %w", err)
 		}
 
+		if createdCondition == nil || createdCondition.Status != metav1.ConditionTrue {
+			condtions.SetCondition(&businesService.Status.Conditions, condtions.ConditionReasonCreated, metav1.ConditionTrue, "Business Service created successfully in PagerDuty")
+		}
+
 		businesService.Status.ID = id
 		log.Info("Created BusinessService", "ID", id, "Name", businesService.Name)
 		return ctrl.Result{}, nil
-	}
-
-	err = r.PagerClient.UpdateBusinessService(pagerbusinesService)
-	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("could not update business service: %w", err)
-	}
-	log.Info("Updated BusinessService", "ID", businesService.Status.ID, "Name", businesService.Name)
-
-	// Check if the BusinessService instance is marked for deletion
-	if businesService.DeletionTimestamp.IsZero() {
-		if !controllerutil.ContainsFinalizer(&businesService, businesServiceFinalizer) {
-
-			controllerutil.AddFinalizer(&businesService, businesServiceFinalizer)
-			if err := r.Update(ctx, &businesService); err != nil {
-				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
-			}
-		}
 	} else {
-		if controllerutil.ContainsFinalizer(&businesService, businesServiceFinalizer) {
-			// Run finalization logic for BusinessService
-			// If the finalization logic fails, don't remove the finalizer so
-			// that we can retry during the next reconciliation.
 
-			log.Info("Deleting BusinessService", "ID", businesService.Status.ID, "Name", businesService.Name)
-			err := r.PagerClient.DeleteBusinessService(businesService.Status.ID)
+		if createdCondition != nil && createdCondition.Status == metav1.ConditionTrue {
+
+			err = r.PagerClient.UpdateBusinessService(pagerbusinesService)
 			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("could not delete business service: %w", err)
+				return ctrl.Result{}, fmt.Errorf("could not update business service: %w", err)
 			}
+			log.Info("Updated BusinessService", "ID", businesService.Status.ID, "Name", businesService.Name)
 
-			// Remove the finalizer
-			controllerutil.RemoveFinalizer(&businesService, businesServiceFinalizer)
-			if err := r.Client.Update(ctx, &businesService, &client.UpdateOptions{}); err != nil {
-				return ctrl.Result{}, fmt.Errorf("could not update finalizers: %w", err)
-			}
-
+		} else {
+			log.Info("Business Service already exists in Pagerduty", "ID", businesService.Status.ID)
+			condtions.SetCondition(&businesService.Status.Conditions, condtions.ConditionReasonFailed, metav1.ConditionTrue, "Service cannot be created, already exists in PagerDuty")
 			return ctrl.Result{}, nil
 		}
+
 	}
 
 	return ctrl.Result{}, nil

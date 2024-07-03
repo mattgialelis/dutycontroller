@@ -32,7 +32,8 @@ type ServicesSpec struct {
 
 // ServicesStatus defines the observed state of Services
 type ServicesStatus struct {
-	ID string `json:"id,omitempty"`
+	ID         string             `json:"id,omitempty"`
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
 }
 
 //+kubebuilder:object:root=true
