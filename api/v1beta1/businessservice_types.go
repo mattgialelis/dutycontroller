@@ -37,6 +37,8 @@ type BusinessServiceStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:resource:scope=Cluster
+
 // BusinessService is the Schema for the businessservices API
 type BusinessService struct {
 	metav1.TypeMeta   `json:",inline"`

@@ -93,6 +93,7 @@ func (r *BusinessServiceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		}
 
 		businesService.Status.ID = id
+		log.Info("Created BusinessService", "ID", id, "Name", businesService.Name)
 		return ctrl.Result{}, nil
 	}
 
@@ -100,6 +101,7 @@ func (r *BusinessServiceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("could not update business service: %w", err)
 	}
+	log.Info("Updated BusinessService", "ID", businesService.Status.ID, "Name", businesService.Name)
 
 	// Check if the BusinessService instance is marked for deletion
 	if businesService.DeletionTimestamp.IsZero() {
