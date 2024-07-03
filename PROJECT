@@ -10,7 +10,6 @@ repo: github.com/mattgialelis/dutycontroller
 resources:
 - api:
     crdVersion: v1
-    namespaced: true
   controller: true
   domain: dutycontroller.io
   group: pagerduty

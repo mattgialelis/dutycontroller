@@ -171,8 +171,7 @@ func (r *ServicesReconciler) getBusinessServiceId(ctx context.Context, service *
 	if service.Spec.BusinessService != "" {
 		var businessService pagerdutyv1beta1.BusinessService
 		if err := r.Get(ctx, client.ObjectKey{
-			Namespace: service.Namespace,
-			Name:      service.Spec.BusinessService,
+			Name: service.Spec.BusinessService,
 		}, &businessService); err != nil {
 			if apierrors.IsNotFound(err) {
 				log.Info("BusinessService not found in cluster, fetching from PagerDuty", "namespace", service.Namespace, "name", service.Spec.BusinessService)

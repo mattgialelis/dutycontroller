@@ -8,7 +8,7 @@ metadata:
 spec:
   acknowledgeTimeout: 300
   autoResolveTimeout: 600
-  businessService: "example-businessservice"
+  businessService: "businessservice-sample"
   description: "My services"
   escalationPolicy: "test1-ep"
   status: "Active"
