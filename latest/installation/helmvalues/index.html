@@ -9,23 +9,25 @@
       
       
       
-        <link rel="prev" href="../installation/helmvalues/">
+        <link rel="prev" href="../helm/">
       
       
+        <link rel="next" href="../../how_to_update/">
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.28">
     
     
       
-        <title>How To Update These Docs - DutyController</title>
+        <title>Helm Chart Values - DutyController</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.6543a935.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -44,7 +46,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -70,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-update-thesse-docs" class="md-skip">
+        <a href="#dutycontroller-helm-chart-configuration" class="md-skip">
           Skip to content
         </a>
       
@@ -86,7 +88,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="DutyController" class="md-header__button md-logo" aria-label="DutyController" data-md-component="logo">
+    <a href="../.." title="DutyController" class="md-header__button md-logo" aria-label="DutyController" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -106,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              How To Update These Docs
+              Helm Chart Values
             
           </span>
         </div>
@@ -219,7 +221,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="DutyController" class="md-nav__button md-logo" aria-label="DutyController" data-md-component="logo">
+    <a href="../.." title="DutyController" class="md-nav__button md-logo" aria-label="DutyController" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -249,7 +251,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -304,7 +306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/pagerduty-Intro/" class="md-nav__link">
+      <a href="../../resources/pagerduty-Intro/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -360,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/pagerduty/businessService/" class="md-nav__link">
+      <a href="../../resources/pagerduty/businessService/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -381,7 +383,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/pagerduty/services/" class="md-nav__link">
+      <a href="../../resources/pagerduty/services/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -402,7 +404,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/pagerduty/orchestrationRoutes/" class="md-nav__link">
+      <a href="../../resources/pagerduty/orchestrationRoutes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -435,17 +437,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -459,7 +463,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Installation
@@ -473,7 +477,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../installation/helm/" class="md-nav__link">
+      <a href="../helm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -491,10 +495,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../installation/helmvalues/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Helm Chart Values
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -503,6 +527,140 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Values
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Values">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      General Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controller-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Image Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-limits-and-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resource Limits and Requests
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-account-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Account Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rbac-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      RBAC Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monitoring Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-values-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Values File
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -519,28 +677,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    How To Update These Docs
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../how_to_update/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -549,48 +689,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#how-to-update-thesse-docs" class="md-nav__link">
-    <span class="md-ellipsis">
-      How to Update thesse docs
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="How to Update thesse docs">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#local-development" class="md-nav__link">
-    <span class="md-ellipsis">
-      Local Development
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -612,6 +710,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -620,19 +720,91 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-to-update-thesse-docs" class="md-nav__link">
+  <a href="#configuration-values" class="md-nav__link">
     <span class="md-ellipsis">
-      How to Update thesse docs
+      Configuration Values
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="How to Update thesse docs">
+    <nav class="md-nav" aria-label="Configuration Values">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#local-development" class="md-nav__link">
+  <a href="#general-configuration" class="md-nav__link">
     <span class="md-ellipsis">
-      Local Development
+      General Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controller-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Image Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-limits-and-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resource Limits and Requests
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-account-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Account Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rbac-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      RBAC Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monitoring Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Configuration
     </span>
   </a>
   
@@ -640,6 +812,24 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-values-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Values File
+    </span>
+  </a>
   
 </li>
       
@@ -658,7 +848,7 @@
                   
 
   
-    <a href="https://github.com/mattgialelis/dutycontroller/edit/master/docs/how_to_update.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/mattgialelis/dutycontroller/edit/master/docs/installation/helmvalues.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
     </a>
@@ -666,26 +856,95 @@
   
 
 
-  <h1>How To Update These Docs</h1>
-
-<h2 id="how-to-update-thesse-docs">How to Update thesse docs</h2>
-<p>For more detailed information on how to contribute to this project, please refer to the Contributing file.</p>
-<h3 id="local-development">Local Development</h3>
-<p>Install Material for MkDocs with <code>pip</code>, ideally by using a <a href="https://realpython.com/what-is-pip/#using-pip-in-a-python-virtual-environment">virtual environment</a>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocs-material<span class="w"> </span>mkdocs-git-revision-date-localized-plugin<span class="w"> </span>mkdocs-awesome-pages-plugin
+<h1 id="dutycontroller-helm-chart-configuration">DutyController Helm Chart Configuration</h1>
+<p>This document outlines the configurable values for the DutyController Helm chart. These values can be adjusted to tailor the deployment of DutyController to your Kubernetes cluster.</p>
+<h2 id="configuration-values">Configuration Values</h2>
+<h3 id="general-configuration">General Configuration</h3>
+<ul>
+<li><code>nameOverride</code>: Overrides the chart name for resources (default: <code>""</code>).</li>
+<li><code>fullnameOverride</code>: Overrides the full name of the resources (default: <code>""</code>).</li>
+<li><code>imagePullSecrets</code>: Specifies docker-registry secret names as an array (default: <code>[]</code>).</li>
+</ul>
+<h3 id="controller-options">Controller Options</h3>
+<ul>
+<li><code>leaderElect</code>: Enables leader election for controller manager (default: <code>false</code>).</li>
+<li><code>livenessProbe</code>: Configures the liveness probe for the controller (default: HTTP GET <code>/healthz</code>).</li>
+<li><code>readinessProbe</code>: Configures the readiness probe for the controller (default: HTTP GET <code>/readyz</code>).</li>
+<li><code>replicaCount</code>: Number of DutyController replicas (default: <code>1</code>).</li>
+</ul>
+<h3 id="image-configuration">Image Configuration</h3>
+<ul>
+<li><code>image.repository</code>: The repository for the DutyController image (default: <code>ghcr.io/mattgialelis/dutycontroller</code>).</li>
+<li><code>image.pullPolicy</code>: Image pull policy (default: <code>IfNotPresent</code>).</li>
+<li><code>image.tag</code>: The image tag to use (default: chart <code>appVersion</code>).</li>
+</ul>
+<h3 id="resource-limits-and-requests">Resource Limits and Requests</h3>
+<ul>
+<li><code>resources</code>: CPU/memory resource requests/limits (default: <code>100m</code> CPU, <code>128Mi</code> memory).</li>
+</ul>
+<h3 id="service-account-configuration">Service Account Configuration</h3>
+<ul>
+<li><code>serviceAccount.create</code>: Specifies whether a service account should be created (default: <code>true</code>).</li>
+<li><code>serviceAccount.automount</code>: Automount service account token (default: <code>true</code>).</li>
+<li><code>serviceAccount.annotations</code>: Annotations to add to the service account (default: <code>{}</code>).</li>
+<li><code>serviceAccount.name</code>: The name of the service account to use.</li>
+</ul>
+<h3 id="rbac-configuration">RBAC Configuration</h3>
+<ul>
+<li><code>rbac.create</code>: Specifies whether RBAC resources should be created (default: <code>true</code>).</li>
+</ul>
+<h3 id="monitoring-configuration">Monitoring Configuration</h3>
+<ul>
+<li><code>monitoring.enabled</code>: Enable metrics port (default: <code>false</code>).</li>
+<li><code>monitoring.port</code>: Port for metrics endpoint (default: <code>8080</code>).</li>
+<li><code>monitoring.serviceMonitor.enabled</code>: Enable service monitor creation (default: <code>false</code>).</li>
+<li><code>monitoring.serviceMonitor.additionalLabels</code>: Additional labels for service monitor (default: <code>{}</code>).</li>
+</ul>
+<h3 id="service-configuration">Service Configuration</h3>
+<ul>
+<li><code>service.type</code>: Type of service to create (default: <code>ClusterIP</code>).</li>
+<li><code>service.ports</code>: Ports configuration for the service.</li>
+</ul>
+<h3 id="additional-configuration">Additional Configuration</h3>
+<ul>
+<li><code>extraEnv</code>: Extra environment variables to add to the container.</li>
+<li><code>envFrom</code>: Secrets that are mounted as <code>envFrom</code> on the pod.</li>
+<li><code>podAnnotations</code>: Annotations to add to the pods.</li>
+<li><code>podLabels</code>: Labels to add to the pods.</li>
+<li><code>nodeSelector</code>: Node labels for pod assignment.</li>
+<li><code>tolerations</code>: Tolerations for pod assignment.</li>
+<li><code>affinity</code>: Affinity for pod assignment.</li>
+<li><code>extraObjects</code>: Create dynamic manifests via values.</li>
+</ul>
+<h2 id="example-usage">Example Usage</h2>
+<p>To customize the deployment, create a <code>values.yaml</code> file with your desired values and pass it during installation:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>helm<span class="w"> </span>install<span class="w"> </span>dutycontroller<span class="w"> </span>duty/dutycontroller<span class="w"> </span>-f<span class="w"> </span>values.yaml
 </code></pre></div>
-<p>In the repository root run:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$<span class="w"> </span>mkdocs<span class="w"> </span>serve
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>INFO<span class="w">     </span>-<span class="w">  </span>Building<span class="w"> </span>documentation...
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>INFO<span class="w">     </span>-<span class="w">  </span>Cleaning<span class="w"> </span>site<span class="w"> </span>directory
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>INFO<span class="w">     </span>-<span class="w">  </span>Documentation<span class="w"> </span>built<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.58<span class="w"> </span>seconds
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>INFO<span class="w">     </span>-<span class="w">  </span><span class="o">[</span><span class="m">09</span>:52:56<span class="o">]</span><span class="w"> </span>Watching<span class="w"> </span>paths<span class="w"> </span><span class="k">for</span><span class="w"> </span>changes:<span class="w"> </span><span class="s1">&#39;docs&#39;</span>,<span class="w"> </span><span class="s1">&#39;mkdocs.yaml&#39;</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>INFO<span class="w">     </span>-<span class="w">  </span><span class="o">[</span><span class="m">09</span>:52:56<span class="o">]</span><span class="w"> </span>Serving<span class="w"> </span>on<span class="w"> </span>http://127.0.0.1:8000/
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>INFO<span class="w">     </span>-<span class="w">  </span><span class="o">[</span><span class="m">09</span>:52:57<span class="o">]</span><span class="w"> </span>Browser<span class="w"> </span>connected:<span class="w"> </span>http://localhost:8000/
+<h2 id="example-values-file">Example Values File</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">image</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/mattgialelis/dutycontroller</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">envFrom</span><span class="p">:</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretRef</span><span class="p">:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dutycontroller-envs</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nt">extraObjects</span><span class="p">:</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1beta1</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExternalSecret</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dutycontroller-envs</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="nt">data</span><span class="p">:</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">remoteRef</span><span class="p">:</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">          </span><span class="nt">conversionStrategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Default</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">          </span><span class="nt">decodingStrategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pagerduty-token</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">        </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PAGERDUTY_TOKEN</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">      </span><span class="nt">refreshInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">      </span><span class="nt">secretStoreRef</span><span class="p">:</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">        </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterSecretStore</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myClusterStore</span>
 </code></pre></div>
-Edit markdown files in the <code>docs/</code> folder or the <code>mkdocs.yaml</code> file.
-Visit <a href="http://localhost:8000/">http://localhost:8000/</a> to see your docs rendered live as you type.</p>
-<p>Once done, please create PR.</p>
 
 
 
@@ -715,7 +974,7 @@ Visit <a href="http://localhost:8000/">http://localhost:8000/</a> to see your do
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../installation/helmvalues/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Helm Chart Values">
+          <a href="../helm/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Helm">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -725,11 +984,27 @@ Visit <a href="http://localhost:8000/">http://localhost:8000/</a> to see your do
                 Previous
               </span>
               <div class="md-ellipsis">
-                Helm Chart Values
+                Helm
               </div>
             </div>
           </a>
         
+        
+          
+          <a href="../../how_to_update/" class="md-footer__link md-footer__link--next" aria-label="Next: How To Update These Docs">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                How To Update These Docs
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
         
       </nav>
     
@@ -756,10 +1031,10 @@ Visit <a href="http://localhost:8000/">http://localhost:8000/</a> to see your do
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "navigation.footer", "navigation.instant", "navigation.tracking"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "navigation.footer", "navigation.instant", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      <script src="../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
       
     
   </body>
