@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/mattgialelis/dutycontroller/compare/v1.1.1...v1.2.0) (2024-07-04)
+
+
+### Features
+
+* Try return on the finalizer addtion to reduce the mulitple calls ([e6af51d](https://github.com/mattgialelis/dutycontroller/commit/e6af51d0a52d895ce69b25f1d24cc587d1b3e4ff))
+* Update to add condtions on Service and business services ([d37584d](https://github.com/mattgialelis/dutycontroller/commit/d37584dcdff6a6578278a82b612c515a49940baa))
+
 ## [1.1.1](https://github.com/mattgialelis/dutycontroller/compare/v1.1.0...v1.1.1) (2024-07-03)
 
 
