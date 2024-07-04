@@ -185,7 +185,7 @@ $(GOLANGCI_LINT): $(LOCALBIN)
 
 .PHONY: helm-crds
 helm-crds: controller-gen
-	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=deploy/charts/dutycontroller/crds
+	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=deploy/charts/dutycontroller/templates
 
 # go-install-tool will 'go install' any package with custom target and name of binary, if it doesn't exist
 # $1 - target path with name of binary (ideally with version)
