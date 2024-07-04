@@ -19,10 +19,11 @@ docker pull ghcr.io/mattgialelis/dutycontroller/dutycontroller:latest
 ```
 
 
-
 ### Helm Chart
 
-To simplify the deployment of DutyController in your Kubernetes cluster, we provide a Helm chart. Add the DutyController Helm repository and install the chart with:
+To simplify the deployment of DutyController in your Kubernetes cluster, we provide a Helm chart. For detailed installation instructions and configuration options, please refer to the [Helm installation guide](https://mattgialelis.github.io/dutycontroller/latest/installation/helm/) and the [Helm values documentation](https://mattgialelis.github.io/dutycontroller/latest/installation/helmvalues/).
+
+Add the DutyController Helm repository and install the chart with:
 
 ```bash
 
@@ -30,6 +31,14 @@ helm repo add duty https://mattgialelis.github.io/dutycontroller/
 helm install dutycontroller duty/dutycontroller
 
 ```
+
+## Current Support
+
+Currently, support is provided for the following Pagerduty resources:
+- [Business Service](https://mattgialelis.github.io/dutycontroller/latest/resources/pagerduty/businessService/)
+- [Services](https://mattgialelis.github.io/dutycontroller/latest/resources/pagerduty/services/)
+- [Orchestration Routes](https://mattgialelis.github.io/dutycontroller/latest/resources/pagerduty/orchestrationRoutes/)
+
 
 ## How to Contribute
 
