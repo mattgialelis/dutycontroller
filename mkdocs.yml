@@ -31,7 +31,15 @@ theme:
     view: material/eye
 nav:
   - Overview: index.md
-  - ...
+  - Resources:
+      - Getting Started with PagerDuty: resources/pagerduty-Intro.md
+      - PagerDuty Integration:
+          - Business Service: resources/pagerduty/businessService.md
+          - Services: resources/pagerduty/services.md
+          - Orchestration Routes: resources/pagerduty/orchestrationRoutes.md
+  - Installation:
+      - Helm: installation/helm.md
+      - Helm Chart Values: installation/helmvalues.md
   - How To Update These Docs: how_to_update.md
 plugins:
   - awesome-pages

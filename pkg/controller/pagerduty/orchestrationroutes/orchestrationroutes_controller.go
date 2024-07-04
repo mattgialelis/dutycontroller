@@ -137,7 +137,10 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 			log.Info("Route does not exist, creating route", "route", orhcestrationRoute)
 			err := r.PagerClient.AddOrchestrationServiceRoute(orhcestrationRoute)
 			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("error creating Orchestration route: %w", err)
+				return ctrl.Result{
+					Requeue:      true,
+					RequeueAfter: 30 * time.Second,
+				}, fmt.Errorf("error creating Orchestration route: %w", err)
 			}
 		} else {
 			// Unmarshal last applied routes
@@ -207,13 +210,19 @@ func (r *OrchestrationroutesReconciler) LookupService(ctx context.Context, names
 			if err != nil {
 				return "", fmt.Errorf("could not get  service by name: %w", err)
 			}
+			if pagerDutyService.ID == "" {
+				return "", fmt.Errorf("service '%s' not found in PagerDuty", serviceName)
+			}
 			return pagerDutyService.ID, nil
 		} else {
 			return "", fmt.Errorf("get Service: %w", err)
 		}
+	} else if service.Status.ID == "" {
+		return "", fmt.Errorf("service '%s' not found in Kubernetes", serviceName)
 	} else {
 		return service.Status.ID, nil
 	}
+
 }
 
 func CompareRoutes(oldRoutes, newRoutes []pagerdutyv1beta1.ServiceRoute) []pagerdutyv1beta1.ServiceRoute {

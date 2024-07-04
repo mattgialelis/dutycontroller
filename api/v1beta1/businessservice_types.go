@@ -32,7 +32,8 @@ type BusinessServiceSpec struct {
 
 // BusinessServiceStatus defines the observed state of BusinessService
 type BusinessServiceStatus struct {
-	ID string `json:"id,omitempty"`
+	ID         string             `json:"id,omitempty"`
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
 }
 
 // +kubebuilder:object:root=true
