@@ -82,12 +82,13 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 			for _, route := range orchestrationRoute.Spec.ServiceRoutes {
 				serviceID, err := r.LookupService(ctx, req.Namespace, route.ServiceRef)
 				if err != nil {
-					return ctrl.Result{}, fmt.Errorf("could not find the service: %w", err)
+					log.Error(err, "could not find the service")
+					return ctrl.Result{}, nil
 				}
 
 				orhcestrationRoute := pd.ServiceRouteToOrchestrationRoute(serviceID, route)
 
-				err = r.PagerClient.DeleteOrchestrationServiceRoute(orhcestrationRoute)
+				err = r.PagerClient.DeleteOrchestrationServiceRoute(ctx, orhcestrationRoute)
 				if err != nil {
 					log.Error(err, "could not delete orchestration route")
 					return ctrl.Result{}, fmt.Errorf("couldnt delete orchestration route: %w", err)
@@ -119,10 +120,8 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 		//Lookup Service
 		serviceID, err := r.LookupService(ctx, req.Namespace, route.ServiceRef)
 		if err != nil {
-			return ctrl.Result{
-				Requeue:      true,
-				RequeueAfter: 30 * time.Second,
-			}, fmt.Errorf("could not find the service: %w", err)
+			log.info("could not find the service, Re-queing in 30seconds ", "service", route.ServiceRef)
+			return ctrl.Result{RequeueAfter: time.Second * 30}, nil
 		}
 
 		//Check if Route exists
@@ -137,10 +136,7 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 			log.Info("Route does not exist, creating route", "route", orhcestrationRoute)
 			err := r.PagerClient.AddOrchestrationServiceRoute(orhcestrationRoute)
 			if err != nil {
-				return ctrl.Result{
-					Requeue:      true,
-					RequeueAfter: 30 * time.Second,
-				}, fmt.Errorf("error creating Orchestration route: %w", err)
+				return ctrl.Result{}, fmt.Errorf("error creating Orchestration route: %w", err)
 			}
 		} else {
 			// Unmarshal last applied routes
@@ -161,7 +157,7 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 						return ctrl.Result{}, fmt.Errorf("could not find the service: %w", err)
 					}
 
-					err = r.PagerClient.DeleteOrchestrationServiceRoute(pd.ServiceRouteToOrchestrationRoute(serivceIdToRemove, removedRoute))
+					err = r.PagerClient.DeleteOrchestrationServiceRoute(ctx, pd.ServiceRouteToOrchestrationRoute(serivceIdToRemove, removedRoute))
 					if err != nil {
 						return ctrl.Result{}, fmt.Errorf("could not delete orchestration route: %w", err)
 					}

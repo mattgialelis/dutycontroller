@@ -5,7 +5,8 @@ import (
 	"context"
 	"errors"
 	"io"
-	"log"
+	"sigs.k8s.io/controller-runtime/pkg/log"
+
 	"net/http"
 	"net/url"
 
@@ -168,7 +169,8 @@ func (pd *Pagerduty) UpdateOrchestrationServiceRoute(OrchestrationRoute Orchestr
 	return nil
 }
 
-func (pd *Pagerduty) DeleteOrchestrationServiceRoute(OrchestrationRoute OrchestrationRoute) error {
+func (pd *Pagerduty) DeleteOrchestrationServiceRoute(ctx context.Context, OrchestrationRoute OrchestrationRoute) error {
+	log := log.FromContext(ctx)
 
 	orchID, ok, err := pd.GetEventOrchestrationByName(OrchestrationRoute.EventOrchestrationName)
 	if err != nil {
@@ -190,7 +192,7 @@ func (pd *Pagerduty) DeleteOrchestrationServiceRoute(OrchestrationRoute Orchestr
 		if rule.Actions.RouteTo != OrchestrationRoute.RouteTo {
 			newRules = append(newRules, rule)
 		} else {
-			log.Println("Removing route", "route", rule.Actions.RouteTo)
+			log.Info("Removing route", "route", rule.Actions.RouteTo)
 		}
 	}
 
