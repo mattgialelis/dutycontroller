@@ -120,7 +120,7 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 		//Lookup Service
 		serviceID, err := r.LookupService(ctx, req.Namespace, route.ServiceRef)
 		if err != nil {
-			log.info("could not find the service, Re-queing in 30seconds ", "service", route.ServiceRef)
+			log.info("could not find the service, re-queing in 30seconds ", "service", route.ServiceRef)
 			return ctrl.Result{RequeueAfter: time.Second * 30}, nil
 		}
 
