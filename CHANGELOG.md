@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.1](https://github.com/mattgialelis/dutycontroller/compare/v1.2.0...v1.2.1) (2024-07-05)
+
+
+### Bug Fixes
+
+* crds templating ([287ac8b](https://github.com/mattgialelis/dutycontroller/commit/287ac8b642e1d7021be19a4627a05a61b0c341ab))
+* goimports eventorch.go ([603dd0f](https://github.com/mattgialelis/dutycontroller/commit/603dd0f04f7d9ec987cc90ad8fb0b7b60d8d8aef))
+* log linter broken ([f56da92](https://github.com/mattgialelis/dutycontroller/commit/f56da92a2f367a7defba81f24c26c0f996d3ec31))
+* orchestration route back off and erroring ([ac11b31](https://github.com/mattgialelis/dutycontroller/commit/ac11b31b7c89cf92d21df4b32c34a4d4f582fdfe))
+* why linter broken ([4d5f2fb](https://github.com/mattgialelis/dutycontroller/commit/4d5f2fb6ff06cc10c298aae87e9e5dcf526896d6))
+
 ## [1.2.0](https://github.com/mattgialelis/dutycontroller/compare/v1.1.1...v1.2.0) (2024-07-04)
 
 
