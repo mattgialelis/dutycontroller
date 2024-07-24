@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	pagerdutyv1beta1 "github.com/mattgialelis/dutycontroller/api/v1beta1"
 
@@ -80,7 +81,11 @@ func (p *Pagerduty) DeletePagerDutyService(id string) error {
 
 	err := p.client.DeleteServiceWithContext(context.Background(), id)
 	if err != nil {
-		return fmt.Errorf("failed to delete service: %w", err)
+		if strings.Contains(err.Error(), "404") {
+			return nil
+		} else {
+			return fmt.Errorf("failed to delete service: %w", err)
+		}
 	}
 
 	return nil

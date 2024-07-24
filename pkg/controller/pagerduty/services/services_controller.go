@@ -27,6 +27,7 @@ import (
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -129,7 +130,7 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 	//Check if the Service instance exists
 	_, exists, err := r.PagerClient.GetPagerDutyServiceByNameDirect(req.Name)
-	if err != nil {
+	if err != nil && exists {
 		return ctrl.Result{}, fmt.Errorf("could not get service by name: %w", err)
 	}
 
@@ -163,7 +164,7 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 	//TODO: add a check to see if the business service is associated with the service
 	//TODO: add a check to see if the business service chanaged
-	if businessServiceId != "" && busServiceCondition == nil || busServiceCondition.Status != v1.ConditionTrue {
+	if businessServiceId != "" && busServiceCondition == nil || busServiceCondition != nil && busServiceCondition.Status != v1.ConditionTrue {
 		time.Sleep(1 * time.Second)
 		err := r.PagerClient.AssociateServiceBusiness(service.Status.ID, businessServiceId)
 		if err != nil {
@@ -185,6 +186,7 @@ func (r *ServicesReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&pagerdutyv1beta1.Services{}).
+		WithOptions(controller.Options{MaxConcurrentReconciles: 10}).
 		Complete(r)
 }
 
@@ -210,10 +212,12 @@ func (r *ServicesReconciler) getBusinessServiceId(ctx context.Context, service *
 				if err != nil {
 					return "", fmt.Errorf("could not get business service by name: %w", err)
 				}
+				log.Info("BusinessService found in PagerDuty", "service", businessServiceId)
 				return businessServiceId, nil
 			}
 			return "", fmt.Errorf("get BusinessService: %w", err)
 		}
+		log.Info("BusinessService found in cluster", "service", businessService.Status.ID)
 		return businessService.Status.ID, nil
 	}
 	return "", nil

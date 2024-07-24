@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"time"
 
+	"math/rand"
+
 	"k8s.io/apimachinery/pkg/util/json"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -55,6 +57,8 @@ type OrchestrationroutesReconciler struct {
 func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 	log.WithValues("orchestrationRoutes", req.NamespacedName)
+
+	requeueAfterTimer := RandomRequeueTimer()
 
 	var orchestrationRoute pagerdutyv1beta1.Orchestrationroutes
 
@@ -120,8 +124,9 @@ func (r *OrchestrationroutesReconciler) Reconcile(ctx context.Context, req ctrl.
 		//Lookup Service
 		serviceID, err := r.LookupService(ctx, req.Namespace, route.ServiceRef)
 		if err != nil {
-			log.Info("could not find the service, re-queing in 30seconds ", "service", route.ServiceRef)
-			return ctrl.Result{RequeueAfter: time.Second * 30}, nil
+
+			log.Info(fmt.Sprintf("could not find the service, re-queuing in %s", requeueAfterTimer), "service", route.ServiceRef, "error", err)
+			return ctrl.Result{RequeueAfter: requeueAfterTimer}, nil
 		}
 
 		//Check if Route exists
@@ -196,29 +201,34 @@ func (r *OrchestrationroutesReconciler) SetupWithManager(mgr ctrl.Manager) error
 
 func (r *OrchestrationroutesReconciler) LookupService(ctx context.Context, namespace string, serviceName string) (string, error) {
 	var service pagerdutyv1beta1.Services
+	log := log.FromContext(ctx)
+
+	log.Info("Looking up service", "namespace", namespace, "serviceName", serviceName)
 
 	if err := r.Get(ctx, client.ObjectKey{
 		Namespace: namespace,
 		Name:      serviceName,
 	}, &service); err != nil {
 		if apierrors.IsNotFound(err) {
-			pagerDutyService, _, err := r.PagerClient.GetPagerDutyServiceByNameDirect(serviceName)
-			if err != nil {
+			log.Info("Service not found in cluster, fetching from PagerDuty", "namespace", namespace, "name", serviceName)
+
+			pagerDutyService, exists, err := r.PagerClient.GetPagerDutyServiceByNameDirect(serviceName)
+			if err != nil || !exists {
 				return "", fmt.Errorf("could not get  service by name: %w", err)
 			}
-			if pagerDutyService.ID == "" {
-				return "", fmt.Errorf("service '%s' not found in PagerDuty", serviceName)
-			}
+
+			log.Info("Service found in PagerDuty or Kubernetes", "service", pagerDutyService)
+
 			return pagerDutyService.ID, nil
-		} else {
-			return "", fmt.Errorf("get Service: %w", err)
 		}
-	} else if service.Status.ID == "" {
-		return "", fmt.Errorf("service '%s' not found in Kubernetes", serviceName)
-	} else {
+	}
+
+	if service.Status.ID != "" {
+		log.Info("Service found in cluster", "service", service.Status.ID)
 		return service.Status.ID, nil
 	}
 
+	return "", fmt.Errorf("could not find service with ID")
 }
 
 func CompareRoutes(oldRoutes, newRoutes []pagerdutyv1beta1.ServiceRoute) []pagerdutyv1beta1.ServiceRoute {
@@ -246,4 +256,19 @@ func CompareRoutes(oldRoutes, newRoutes []pagerdutyv1beta1.ServiceRoute) []pager
 	}
 
 	return removedRoutes
+}
+
+func RandomRequeueTimer() time.Duration {
+
+	rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	// Define the minimum and maximum durations in seconds
+	minDuration := 2 * 60 // 2 minutes in seconds
+	maxDuration := 5 * 60 // 5 minutes in seconds
+
+	// Generate a random duration between minDuration and maxDuration
+	randomDurationInSeconds := rand.Intn(maxDuration-minDuration+1) + minDuration
+
+	// Convert seconds to time.Duration
+	return time.Duration(randomDurationInSeconds) * time.Second
 }
