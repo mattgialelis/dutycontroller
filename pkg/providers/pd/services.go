@@ -3,7 +3,9 @@ package pd
 import (
 	"context"
 	"fmt"
-	"log"
+
+	"sigs.k8s.io/controller-runtime/pkg/log"
+
 	"strings"
 
 	pagerdutyv1beta1 "github.com/mattgialelis/dutycontroller/api/v1beta1"
@@ -77,11 +79,13 @@ func (p *Pagerduty) UpdatePagerDutyService(service Service) error {
 	return nil
 }
 
-func (p *Pagerduty) DeletePagerDutyService(id string) error {
+func (p *Pagerduty) DeletePagerDutyService(ctx context.Context, id string) error {
+	log := log.FromContext(ctx)
 
 	err := p.client.DeleteServiceWithContext(context.Background(), id)
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
+			log.Info("Service not found in PagerDdy, skipping deletion, no need to delete")
 			return nil
 		} else {
 			return fmt.Errorf("failed to delete service: %w", err)

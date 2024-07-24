@@ -97,7 +97,7 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			log.Info("Deleting Service", "ID", service.Status.ID, "Name", service.Name)
 
 			if createdCondition != nil && createdCondition.Status == v1.ConditionTrue {
-				err := r.PagerClient.DeletePagerDutyService(service.Status.ID)
+				err := r.PagerClient.DeletePagerDutyService(ctx, service.Status.ID)
 				if err != nil {
 					return ctrl.Result{}, fmt.Errorf("could not delete pagerduty service: %w", err)
 				}
