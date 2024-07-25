@@ -63,7 +63,7 @@ func (p *Pagerduty) UpdatePagerDutyService(service Service) error {
 
 	serviceInput := service.ToPagerDutyService()
 
-	existingService, _, err := p.GetPagerDutyServiceByNameDirect(service.Name)
+	existingService, _, err := p.GetPagerDutyServiceByNameDirect(context.TODO(), service.Name)
 	if err != nil {
 		return err
 	}
