@@ -129,7 +129,7 @@ func (r *ServicesReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	pagerService := pd.ServicesSpectoService(service, escalationPolicyId)
 
 	//Check if the Service instance exists
-	_, exists, err := r.PagerClient.GetPagerDutyServiceByNameDirect(req.Name)
+	_, exists, err := r.PagerClient.GetPagerDutyServiceByNameDirect(ctx, req.Name)
 	if err != nil && exists {
 		return ctrl.Result{}, fmt.Errorf("could not get service by name: %w", err)
 	}

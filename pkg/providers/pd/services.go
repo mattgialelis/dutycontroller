@@ -95,17 +95,20 @@ func (p *Pagerduty) DeletePagerDutyService(ctx context.Context, id string) error
 	return nil
 }
 
-func (p *Pagerduty) GetPagerDutyServiceByNameDirect(name string) (pagerduty.Service, bool, error) {
+func (p *Pagerduty) GetPagerDutyServiceByNameDirect(ctx context.Context, name string) (pagerduty.Service, bool, error) {
 	// Go directly to PagerDuty to get the service
 	var allServices []pagerduty.Service
 	var offset uint = 0
+
+	log := log.FromContext(ctx)
+
 	for {
 		services, err := p.client.ListServicesPaginated(
 			context.Background(),
 			pagerduty.ListServiceOptions{Limit: 100, Offset: offset},
 		)
 		if err != nil {
-			log.Println("Failed to refresh PagerDuty service cache:", err)
+			log.Info("Failed to refresh PagerDuty service cache:", err)
 			return pagerduty.Service{}, false, err
 		}
 		allServices = append(allServices, services...)
