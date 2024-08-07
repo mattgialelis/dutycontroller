@@ -3,7 +3,10 @@ package pd
 import (
 	"context"
 	"fmt"
-	"log"
+
+	"sigs.k8s.io/controller-runtime/pkg/log"
+
+	"strings"
 
 	pagerdutyv1beta1 "github.com/mattgialelis/dutycontroller/api/v1beta1"
 
@@ -60,7 +63,7 @@ func (p *Pagerduty) UpdatePagerDutyService(service Service) error {
 
 	serviceInput := service.ToPagerDutyService()
 
-	existingService, _, err := p.GetPagerDutyServiceByNameDirect(service.Name)
+	existingService, _, err := p.GetPagerDutyServiceByNameDirect(context.TODO(), service.Name)
 	if err != nil {
 		return err
 	}
@@ -76,27 +79,36 @@ func (p *Pagerduty) UpdatePagerDutyService(service Service) error {
 	return nil
 }
 
-func (p *Pagerduty) DeletePagerDutyService(id string) error {
+func (p *Pagerduty) DeletePagerDutyService(ctx context.Context, id string) error {
+	log := log.FromContext(ctx)
 
 	err := p.client.DeleteServiceWithContext(context.Background(), id)
 	if err != nil {
-		return fmt.Errorf("failed to delete service: %w", err)
+		if strings.Contains(err.Error(), "404") {
+			log.Info("Service not found in PagerDdy, skipping deletion, no need to delete")
+			return nil
+		} else {
+			return fmt.Errorf("failed to delete service: %w", err)
+		}
 	}
 
 	return nil
 }
 
-func (p *Pagerduty) GetPagerDutyServiceByNameDirect(name string) (pagerduty.Service, bool, error) {
+func (p *Pagerduty) GetPagerDutyServiceByNameDirect(ctx context.Context, name string) (pagerduty.Service, bool, error) {
 	// Go directly to PagerDuty to get the service
 	var allServices []pagerduty.Service
 	var offset uint = 0
+
+	log := log.FromContext(ctx)
+
 	for {
 		services, err := p.client.ListServicesPaginated(
 			context.Background(),
 			pagerduty.ListServiceOptions{Limit: 100, Offset: offset},
 		)
 		if err != nil {
-			log.Println("Failed to refresh PagerDuty service cache:", err)
+			log.Info("Failed to refresh PagerDuty service cache:", err)
 			return pagerduty.Service{}, false, err
 		}
 		allServices = append(allServices, services...)
