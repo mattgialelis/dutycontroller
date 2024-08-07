@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.2](https://github.com/mattgialelis/dutycontroller/compare/v1.2.1...v1.2.2) (2024-08-07)
+
+
+### Bug Fixes
+
+* add more logging on delete on 404 ([0edaebe](https://github.com/mattgialelis/dutycontroller/commit/0edaebe745973f3ec30268b9d1f1010563f05819))
+* fix forgotten function ([8fd0654](https://github.com/mattgialelis/dutycontroller/commit/8fd065415c76e0c32bef8f955bc8eed3ad3a33b8))
+* Impliment random timeout/retry on Orchestration routes for eventual consistency and fix logic ([af16ebd](https://github.com/mattgialelis/dutycontroller/commit/af16ebd7f9353ca9f2e74e8903d61c23ab4e9ef4))
+* lints ([ecd24bb](https://github.com/mattgialelis/dutycontroller/commit/ecd24bb4337602929e6ba90abe65689921e41e58))
+* Try force go lint to use local ([2ff7f8e](https://github.com/mattgialelis/dutycontroller/commit/2ff7f8e1c961c54071b02629660234599f1d2377))
+
 ## [1.2.1](https://github.com/mattgialelis/dutycontroller/compare/v1.2.0...v1.2.1) (2024-07-05)
 
 
